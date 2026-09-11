@@ -1,0 +1,47 @@
+name: CI & Agent Quality Gates
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test-and-evals:
+    name: Lint, Test, and CI Eval Gates
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.12", "3.13"]
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Run Ruff Linting & Formatting Check
+        run: |
+          ruff check src tests
+          ruff format --check src tests
+
+      - name: Run MyPy Strict Type Checking
+        run: |
+          mypy src tests
+
+      - name: Run Automated Pytest Suite
+        run: |
+          PYTHONPATH=src pytest -v --cov=people_agent_mesh
+
+      - name: Run CI Golden Benchmark Quality Gates
+        run: |
+          PYTHONPATH=src python -m people_agent_mesh.cli --evals
