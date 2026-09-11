@@ -31,6 +31,7 @@ dependencies = [
 [project.optional-dependencies]
 dev = [
     "pytest>=8.0.0",
+    "pytest-cov>=5.0.0",
     "mypy>=1.10.0",
     "ruff>=0.5.0",
 ]
@@ -76,3 +77,10 @@ testpaths = ["tests"]
 python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
+
+[tool.coverage.run]
+source = ["src/people_agent_mesh"]
+omit = ["*/tests/*"]
+
+[tool.coverage.report]
+show_missing = true
