@@ -19,7 +19,7 @@ def _sample_employee(
     return EmployeeProfile(
         employee_id="EMP-TEST-1",
         name="Beatriz Lima",
-        email="beatriz@nubank.internal",
+        email="beatriz@enterprise.internal",
         department="Core Engineering",
         job_title="Software Engineer",
         level=level,
@@ -100,11 +100,11 @@ def test_supervisor_hitl_workflow_and_resume() -> None:
     resumed = supervisor.resume_human_decision(
         state=result.state,
         decision=ApprovalStatus.APPROVED,
-        decided_by="vp.eng@nubank.internal",
+        decided_by="vp.eng@enterprise.internal",
         comments="Approved in calibration committee.",
     )
 
     assert resumed.status == WorkflowStatus.COMPLETED
     assert resumed.approval_request is not None
     assert resumed.approval_request.status == ApprovalStatus.APPROVED
-    assert resumed.approval_request.decided_by == "vp.eng@nubank.internal"
+    assert resumed.approval_request.decided_by == "vp.eng@enterprise.internal"

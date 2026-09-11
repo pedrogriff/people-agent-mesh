@@ -21,7 +21,7 @@ def get_golden_scenarios() -> list[dict[str, Any]]:
             "employee": EmployeeProfile(
                 employee_id="EMP-BR-001",
                 name="Ana Clara Silva",
-                email="ana.silva@nubank.internal",
+                email="ana.silva@enterprise.internal",
                 department="Core Banking",
                 job_title="Software Engineer",
                 level="IC4",
@@ -46,7 +46,7 @@ def get_golden_scenarios() -> list[dict[str, Any]]:
             "employee": EmployeeProfile(
                 employee_id="EMP-US-002",
                 name="David Miller",
-                email="david.miller@nubank.internal",
+                email="david.miller@enterprise.internal",
                 department="Data Platform",
                 job_title="Senior Software Engineer",
                 level="IC4",
@@ -71,7 +71,7 @@ def get_golden_scenarios() -> list[dict[str, Any]]:
             "employee": EmployeeProfile(
                 employee_id="EMP-BR-003",
                 name="Lucas Oliveira",
-                email="lucas.oliveira@nubank.internal",
+                email="lucas.oliveira@enterprise.internal",
                 department="Customer Experience",
                 job_title="Operations Specialist",
                 level="IC3",
@@ -96,7 +96,7 @@ def get_golden_scenarios() -> list[dict[str, Any]]:
             "employee": EmployeeProfile(
                 employee_id="EMP-CA-004",
                 name="Emily Tremblay",
-                email="emily.tremblay@nubank.internal",
+                email="emily.tremblay@enterprise.internal",
                 department="Credit Risk",
                 job_title="Risk Model Engineer",
                 level="IC5",

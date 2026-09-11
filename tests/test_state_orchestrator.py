@@ -13,7 +13,7 @@ def test_mesh_state_snapshot_serialization() -> None:
     emp = EmployeeProfile(
         employee_id="EMP-100",
         name="Rodrigo Santos",
-        email="rodrigo@nubank.internal",
+        email="rodrigo@enterprise.internal",
         department="Platform Engineering",
         job_title="Software Engineer",
         level="IC4",

@@ -8,7 +8,7 @@ def test_brazil_clt_salary_decrease_violation() -> None:
     emp = EmployeeProfile(
         employee_id="EMP-BR-1",
         name="Camila Costa",
-        email="camila@nubank.internal",
+        email="camila@enterprise.internal",
         department="Engineering",
         job_title="Software Engineer",
         level="IC4",
@@ -38,7 +38,7 @@ def test_us_flsa_threshold_warning() -> None:
     emp = EmployeeProfile(
         employee_id="EMP-US-1",
         name="John Doe",
-        email="john@nubank.internal",
+        email="john@enterprise.internal",
         department="Support",
         job_title="Associate",
         level="IC2",
@@ -69,7 +69,7 @@ def test_canada_pay_equity_warning() -> None:
     emp = EmployeeProfile(
         employee_id="EMP-CA-1",
         name="Alexandre Roy",
-        email="alex@nubank.internal",
+        email="alex@enterprise.internal",
         department="Engineering",
         job_title="Staff Engineer",
         level="IC6",

@@ -9,7 +9,7 @@
 
 ## 1. Context & Problem Statement
 
-Nubank operates across Brazil, the United States, and Canada, processing sensitive People data:
+Global organizations operating across Brazil, the United States, and Canada, processing sensitive People data:
 - **Brazil**: CPF (*Cadastro de Pessoas Físicas*), CLT wage contracts, maternity status, protected under **LGPD** (*Lei Geral de Proteção de Dados*, Law No. 13.709/2018).
 - **United States**: SSN (Social Security Numbers), compensation histories, protected under federal and state privacy statutes.
 - **Canada**: SIN (Social Insurance Numbers), pay transparency disclosures, protected under **PIPEDA**.

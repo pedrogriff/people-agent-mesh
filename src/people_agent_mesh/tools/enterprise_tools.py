@@ -170,7 +170,7 @@ class SlackApprovalTool:
             "dispatched": True,
             "channel": f"#people-approvals-{inp.approver_role.lower()}",
             "message_ts": f"1726000000.{len(self.dispatches) + 1}",
-            "callback_url": f"https://mesh.nubank.internal/api/v1/approvals/{inp.callback_token}",
+            "callback_url": f"https://mesh.internal/api/v1/approvals/{inp.callback_token}",
         }
         self.dispatches.append({"input": inp.model_dump(), "result": record})
         self.idempotency.store(inp.callback_token, record)

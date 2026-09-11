@@ -1,14 +1,14 @@
-# RFC-001: Nubank Enterprise Agent Standards & Tool Contract Specification
+# RFC-001: Enterprise Agent Standards & Tool Contract Specification
 
 **Author**: Pedro Griff Marcincowski (Staff Software Engineer, AI Agents)  
-**Target Audience**: All Engineering Teams building or adopting AI Agents across Nubank  
+**Target Audience**: All Engineering Teams building or adopting AI Agents across distributed engineering teams  
 **Status**: Adopted as Engineering Standard  
 
 ---
 
 ## 1. Abstract & Motivation
 
-As AI-powered capabilities scale across Nubank, we must transition from bespoke prompt scripts to enterprise agent products. This RFC establishes the **Nubank Agent Architecture Standard**, defining mandatory engineering baselines for:
+As AI-powered capabilities scale across distributed engineering teams, we must transition from bespoke prompt scripts to enterprise agent products. This RFC establishes the **Enterprise Agent Architecture Standard**, defining mandatory engineering baselines for:
 1. **Agent Declarative Specifications (`AgentSpec`)**
 2. **Strict Tool Contracts (`ToolSpec`)**
 3. **Resilience & Fault Isolation (Circuit Breakers & Idempotency)**
@@ -19,7 +19,7 @@ As AI-powered capabilities scale across Nubank, we must transition from bespoke 
 ## 2. Core Architectural Standards
 
 ### 2.1 Agent Specification Contract (`AgentSpec`)
-Every production agent deployed in the Nubank ecosystem must implement the declarative contract:
+Every production agent deployed in the enterprise ecosystem must implement the declarative contract:
 - **`Identity & Purpose`**: Unique system name, domain ownership, and versioned semantic prompt.
 - **`Scope & Authorization`**: Declared ABAC permission boundary and maximum data classification (`PUBLIC`, `INTERNAL`, `RESTRICTED_SPII`).
 - **`Failure Modes & Degraded Behavior`**: Explicit fallback callable when upstream models experience degradation or latency spikes.

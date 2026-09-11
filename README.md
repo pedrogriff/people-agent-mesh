@@ -223,7 +223,7 @@ python -m people_agent_mesh.cli --evals
 This repository serves as an enterprise standard and architectural reference:
 - **[ADR-001: Stateful Graph Orchestration vs. Autonomous ReAct Loops](docs/ADR-001-stateful-orchestration.md)**: Architectural analysis of determinism, state serialization, and crash-resilient HITL.
 - **[ADR-002: Zero-Retention Privacy Gateway](docs/ADR-002-zero-retention-privacy-gateway.md)**: Cryptographic surrogate tokenization and LGPD Article 18 right-to-be-forgotten design.
-- **[RFC-001: Nubank Enterprise Agent Standards](docs/RFC-001-enterprise-agent-standards.md)**: Guidelines for `AgentSpec`, `ToolSpec`, circuit breaking, and CI quality gates adopted across engineering teams.
+- **[RFC-001: Enterprise Agent Standards](docs/RFC-001-enterprise-agent-standards.md)**: Guidelines for `AgentSpec`, `ToolSpec`, circuit breaking, and CI quality gates adopted across engineering teams.
 
 ---
 

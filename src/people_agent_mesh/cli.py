@@ -75,7 +75,7 @@ def run_demo() -> None:
     emp = EmployeeProfile(
         employee_id="EMP-BR-8821",
         name="Gabriel Santos",
-        email="gabriel.santos@nubank.internal",
+        email="gabriel.santos@enterprise.internal",
         department="Core Banking Infrastructure",
         job_title="Senior Software Engineer",
         level="IC4",
@@ -163,7 +163,7 @@ def run_demo() -> None:
         resumed_state = supervisor.resume_human_decision(
             state=state,
             decision=ApprovalStatus.APPROVED,
-            decided_by="vp.engineering@nubank.internal",
+            decided_by="vp.engineering@enterprise.internal",
             comments="Approved based on exceptional cross-border infrastructure delivery and strong team impact.",
         )
         print(f"   Workflow Resumed. Final Status: {resumed_state.status.value}")
