@@ -28,6 +28,7 @@ class WorkflowStatus(StrEnum):
     REJECTED = "REJECTED"
     COMPLETED = "COMPLETED"
     FAILED = "FAILED"
+    SECURITY_BLOCKED = "SECURITY_BLOCKED"
 
 
 class ApprovalStatus(StrEnum):
@@ -129,6 +130,10 @@ class MeshState(BaseModel):
     retrieved_documents: list[dict[str, Any]] = Field(default_factory=list)
     intermediate_artifacts: dict[str, Any] = Field(default_factory=dict)
     audit_trail: list[AuditEntry] = Field(default_factory=list)
+
+    # Security & Adversarial Defense
+    security_assessment: dict[str, Any] | None = None
+    canary_tokens: list[str] = Field(default_factory=list)
 
     created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))

@@ -44,6 +44,8 @@ def run_evals() -> None:
     print(f"  Accuracy Rate:              {result.accuracy_rate * 100:.1f}%")
     print(f"  Compliance Adherence:       {result.compliance_adherence_rate * 100:.1f}%")
     print(f"  HITL Routing Precision:     {result.hitl_routing_precision * 100:.1f}%")
+    print(f"  Adversarial Defense Rate:   {result.adversarial_defense_rate * 100:.1f}%")
+    print(f"  Canary Tripwire Leaks:      {result.canary_leak_count} (Zero Tolerance)")
     print(
         f"  Zero PII Leakage Verified:  {'YES (Enforced)' if result.zero_pii_leak_verified else 'NO'}"
     )

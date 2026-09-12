@@ -28,7 +28,9 @@ from people_agent_mesh.mcp.protocol import (
     ToolCallResult,
     ToolDefinition,
 )
+from people_agent_mesh.security.canary import CanaryManager
 from people_agent_mesh.security.compliance import ComplianceEngine
+from people_agent_mesh.security.guardrails import PromptInjectionGuardrail
 from people_agent_mesh.security.tokenizer import PIITokenVault, ZeroRetentionPrivacyGateway
 from people_agent_mesh.tools.contracts import MarketBandInput
 from people_agent_mesh.tools.enterprise_tools import MarketBenchmarkTool
@@ -47,10 +49,14 @@ class PeopleMeshMCPServer:
         self,
         privacy_gateway: ZeroRetentionPrivacyGateway | None = None,
         benchmark_tool: MarketBenchmarkTool | None = None,
+        guardrail: PromptInjectionGuardrail | None = None,
+        canary_manager: CanaryManager | None = None,
     ) -> None:
         self.privacy_gateway = privacy_gateway or ZeroRetentionPrivacyGateway(PIITokenVault())
         self.benchmark_tool = benchmark_tool or MarketBenchmarkTool()
         self.compensation_agent = CompensationAgent(benchmark_tool=self.benchmark_tool)
+        self.guardrail = guardrail or PromptInjectionGuardrail()
+        self.canary_manager = canary_manager or CanaryManager()
         self.session_vaults: dict[str, ZeroRetentionPrivacyGateway] = {}
 
     def _get_gateway(self, session_id: str | None) -> ZeroRetentionPrivacyGateway:
@@ -252,6 +258,41 @@ class PeopleMeshMCPServer:
                             "description": "Optional session ID to shred.",
                         }
                     },
+                },
+            ),
+            ToolDefinition(
+                name="scan_prompt_injection",
+                description=(
+                    "Evaluates untrusted employee notes, self-evaluations, or RAG documents "
+                    "for prompt injection, jailbreaks, delimiter escape, and privilege escalation attacks. "
+                    "Returns normalized threat score (0.0 - 1.0), severity, matched patterns, and sanitized text."
+                ),
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "text": {
+                            "type": "string",
+                            "description": "Raw untrusted text to inspect for adversarial attacks.",
+                        },
+                    },
+                    "required": ["text"],
+                },
+            ),
+            ToolDefinition(
+                name="verify_canary_integrity",
+                description=(
+                    "Scans text payloads for cryptographic tripwires (canary tokens). "
+                    "Asserts zero canary leakage to detect exfiltration of confidential context."
+                ),
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "text": {
+                            "type": "string",
+                            "description": "Output text to verify for canary tripwire leakage.",
+                        },
+                    },
+                    "required": ["text"],
                 },
             ),
         ]
@@ -686,6 +727,35 @@ class PeopleMeshMCPServer:
                 return ToolCallResult(
                     content=[{"type": "text", "text": json.dumps(shred_data, indent=2)}],
                     isError=False,
+                )
+
+            elif name == "scan_prompt_injection":
+                raw_text = str(arguments["text"])
+                assessment = self.guardrail.evaluate_threat(raw_text)
+                scan_data: dict[str, Any] = {
+                    "is_blocked": assessment.is_blocked,
+                    "threat_score": assessment.threat_score,
+                    "severity": assessment.severity.value,
+                    "matched_patterns": assessment.matched_patterns,
+                    "sanitized_text": assessment.sanitized_text,
+                    "explanation": assessment.explanation,
+                }
+                return ToolCallResult(
+                    content=[{"type": "text", "text": json.dumps(scan_data, indent=2)}],
+                    isError=assessment.is_blocked,
+                )
+
+            elif name == "verify_canary_integrity":
+                out_text = str(arguments["text"])
+                leaks = self.canary_manager.scan_for_leaks(out_text)
+                canary_data: dict[str, Any] = {
+                    "canary_leak_detected": len(leaks) > 0,
+                    "leaked_tokens": leaks,
+                    "status": "COMPROMISED" if leaks else "INTACT",
+                }
+                return ToolCallResult(
+                    content=[{"type": "text", "text": json.dumps(canary_data, indent=2)}],
+                    isError=len(leaks) > 0,
                 )
 
             else:

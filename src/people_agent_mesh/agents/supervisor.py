@@ -22,7 +22,9 @@ from people_agent_mesh.core.state import (
     WorkflowType,
 )
 from people_agent_mesh.security.abac import ABACSecurityEngine, RequesterContext
+from people_agent_mesh.security.canary import CanaryLeakageException, CanaryManager
 from people_agent_mesh.security.compliance import ComplianceEngine
+from people_agent_mesh.security.guardrails import PromptInjectionGuardrail
 from people_agent_mesh.security.tokenizer import ZeroRetentionPrivacyGateway
 from people_agent_mesh.tools.contracts import SlackApprovalDispatchInput
 from people_agent_mesh.tools.enterprise_tools import SlackApprovalTool
@@ -36,6 +38,8 @@ class MeshSupervisorAgent(BaseAgent):
         privacy_gateway: ZeroRetentionPrivacyGateway | None = None,
         abac_engine: ABACSecurityEngine | None = None,
         slack_tool: SlackApprovalTool | None = None,
+        guardrail: PromptInjectionGuardrail | None = None,
+        canary_manager: CanaryManager | None = None,
     ) -> None:
         super().__init__(name="MeshSupervisorAgent")
         self.comp_agent = comp_agent or CompensationAgent()
@@ -43,6 +47,8 @@ class MeshSupervisorAgent(BaseAgent):
         self.privacy_gateway = privacy_gateway or ZeroRetentionPrivacyGateway()
         self.abac_engine = abac_engine
         self.slack_tool = slack_tool or SlackApprovalTool()
+        self.guardrail = guardrail or PromptInjectionGuardrail()
+        self.canary_manager = canary_manager or CanaryManager()
 
     def _assess_risk(self, state: MeshState) -> tuple[float, str, str]:
         """
@@ -93,6 +99,38 @@ class MeshSupervisorAgent(BaseAgent):
     def execute(self, state: MeshState) -> AgentResult:
         start_time = time.time()
         current_state = state
+
+        # 0. Pre-Flight Adversarial Prompt Injection & Threat Assessment
+        raw_inputs_to_scan: list[str] = []
+        for v in state.intermediate_artifacts.values():
+            if isinstance(v, str):
+                raw_inputs_to_scan.append(v)
+        for doc in state.retrieved_documents:
+            if isinstance(doc, dict):
+                for dv in doc.values():
+                    if isinstance(dv, str):
+                        raw_inputs_to_scan.append(dv)
+
+        for raw_text in raw_inputs_to_scan:
+            assessment = self.guardrail.evaluate_threat(raw_text)
+            if assessment.is_blocked:
+                blocked_state = current_state.model_copy(
+                    update={
+                        "status": WorkflowStatus.SECURITY_BLOCKED,
+                        "security_assessment": assessment.model_dump(),
+                    }
+                ).record_audit(
+                    actor=self.name,
+                    action="SECURITY_ALERT_PROMPT_INJECTION_BLOCKED",
+                    details=assessment.model_dump(),
+                )
+                return AgentResult(
+                    agent_name=self.name,
+                    success=False,
+                    state=blocked_state,
+                    errors=[assessment.explanation],
+                    duration_ms=(time.time() - start_time) * 1000,
+                )
 
         # 1. ABAC Authorization check if engine is attached
         if self.abac_engine:
@@ -207,6 +245,33 @@ class MeshSupervisorAgent(BaseAgent):
                 action="AUTO_APPROVED_LOW_RISK",
                 details={"risk_score": risk_score},
             )
+
+        # 5. Post-Flight Tripwire Barrier: Assert zero canary leakage in outputs
+        texts_to_verify: list[str] = []
+        if current_state.comp_proposal:
+            texts_to_verify.append(current_state.comp_proposal.rationale)
+        if current_state.promotion_proposal:
+            texts_to_verify.append(current_state.promotion_proposal.business_impact_summary)
+
+        for out_text in texts_to_verify:
+            if out_text:
+                try:
+                    self.canary_manager.assert_zero_canary_leakage(out_text)
+                except CanaryLeakageException as cle:
+                    leaked_state = current_state.model_copy(
+                        update={"status": WorkflowStatus.SECURITY_BLOCKED}
+                    ).record_audit(
+                        actor=self.name,
+                        action="SECURITY_ALERT_CANARY_LEAK_DETECTED",
+                        details={"canary_token": cle.token},
+                    )
+                    return AgentResult(
+                        agent_name=self.name,
+                        success=False,
+                        state=leaked_state,
+                        errors=[str(cle)],
+                        duration_ms=(time.time() - start_time) * 1000,
+                    )
 
         duration = (time.time() - start_time) * 1000
         return AgentResult(
