@@ -279,6 +279,7 @@ See [docs/MCP-SERVER-GUIDE.md](docs/MCP-SERVER-GUIDE.md) for full configuration 
 ## 📚 Staff Technical Leadership & Standards
 
 This repository serves as an enterprise standard and architectural reference:
+- **[Staff System Design Whitepaper & Interview Guide](docs/STAFF-SYSTEM-DESIGN.md)**: Comprehensive architectural whitepaper mapping the 7 Staff SWE core competencies (orchestration trade-offs, zero-retention privacy, adversarial defense, MCP, multi-tier evals, and FinOps).
 - **[ADR-001: Stateful Graph Orchestration vs. Autonomous ReAct Loops](docs/ADR-001-stateful-orchestration.md)**: Architectural analysis of determinism, state serialization, and crash-resilient HITL.
 - **[ADR-002: Zero-Retention Privacy Gateway](docs/ADR-002-zero-retention-privacy-gateway.md)**: Cryptographic surrogate tokenization and LGPD Article 18 right-to-be-forgotten design.
 - **[ADR-003: Adversarial Prompt Injection Defense & Canary Tripwires](docs/ADR-003-adversarial-prompt-injection-defense.md)**: Heuristic threat scoring, delimiter sandboxing, and canary exfiltration barriers.
