@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PeopleAgentMesh: Enterprise Multi-Agent Orchestration Platform</title>
+  <link rel="stylesheet" href="/static/styles.css">
+</head>
+<body>
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-icon">⚡</div>
+      <div class="brand-title">
+        <h1>PeopleAgentMesh Platform</h1>
+        <p>Enterprise Multi-Agent Orchestration & Human-in-the-Loop Governance</p>
+      </div>
+    </div>
+    <div class="header-badges">
+      <span class="badge badge-green"><span class="badge-pulse"></span> Mesh Engine Live</span>
+      <span class="badge badge-blue">🇧🇷 CLT/LGPD</span>
+      <span class="badge badge-amber">🇺🇸 FLSA</span>
+      <span class="badge badge-purple">🇨🇦 PIPEDA</span>
+    </div>
+  </header>
+
+  <!-- Navigation Tabs -->
+  <nav class="tab-nav">
+    <button class="tab-btn active" data-tab="tab-orchestrator">🤖 Multi-Agent Orchestrator & HITL</button>
+    <button class="tab-btn" data-tab="tab-privacy">🔒 Zero-Retention Privacy Gateway</button>
+    <button class="tab-btn" data-tab="tab-evals">📊 CI Golden Benchmark Evals</button>
+    <button class="tab-btn" data-tab="tab-docs">📚 Architecture & ADRs</button>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container">
+
+    <!-- Tab 1: Orchestrator & HITL -->
+    <section id="tab-orchestrator" class="tab-content active">
+      
+      <!-- Telemetry Row -->
+      <div class="metric-row">
+        <div class="metric-pill">
+          <div class="metric-val" id="tel-latency">0.0 ms</div>
+          <div class="metric-lbl">Execution Latency</div>
+        </div>
+        <div class="metric-pill">
+          <div class="metric-val" id="tel-tokens">0</div>
+          <div class="metric-lbl">Tokens Consumed</div>
+        </div>
+        <div class="metric-pill">
+          <div class="metric-val" id="tel-cost">$0.000</div>
+          <div class="metric-lbl">Est. FinOps Cost</div>
+        </div>
+        <div class="metric-pill">
+          <div class="metric-val" style="color: var(--accent-green);">100%</div>
+          <div class="metric-lbl">Statutory Compliance</div>
+        </div>
+      </div>
+
+      <!-- Pipeline DAG Visualizer -->
+      <div class="pipeline-bar">
+        <div class="pipeline-node" id="node-ingress">
+          <div class="node-circle">1</div>
+          <div class="node-label">Ingress & ABAC</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="node-tokenizer">
+          <div class="node-circle">2</div>
+          <div class="node-label">PII Tokenizer</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="node-supervisor">
+          <div class="node-circle">3</div>
+          <div class="node-label">Supervisor Route</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="node-agents">
+          <div class="node-circle">4</div>
+          <div class="node-label">Comp & Promo Mesh</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="node-compliance">
+          <div class="node-circle">5</div>
+          <div class="node-label">Labor Verification</div>
+        </div>
+        <div class="pipeline-arrow">→</div>
+        <div class="pipeline-node" id="node-hitl">
+          <div class="node-circle">6</div>
+          <div class="node-label">HITL Interrupt Gate</div>
+        </div>
+      </div>
+
+      <!-- Two-Column Layout -->
+      <div class="grid-2">
+        <!-- Left: Input Form -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">⚙️ Calibration Parameters</div>
+            <select id="scenario-select" style="width: auto; padding: 0.3rem 0.6rem; font-size: 0.8rem;">
+              <option value="brazil">🇧🇷 Brazil IC4 (High Merit + Promotion)</option>
+              <option value="us">🇺🇸 United States IC5 (Promotion Review)</option>
+              <option value="canada">🇨🇦 Canada IC4 (Standard Calibration)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Employee ID</label>
+            <input type="text" id="emp-id" value="EMP-BR-8821">
+          </div>
+
+          <div class="form-group">
+            <label>Full Legal Name</label>
+            <input type="text" id="emp-name" value="Gabriel Santos">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label>Jurisdiction</label>
+              <select id="emp-jurisdiction">
+                <option value="BRAZIL">BRAZIL (CLT / LGPD)</option>
+                <option value="UNITED_STATES">UNITED STATES (FLSA)</option>
+                <option value="CANADA">CANADA (PIPEDA)</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Current Level</label>
+              <input type="text" id="emp-level" value="IC4">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label>Current Base Salary</label>
+              <input type="number" id="emp-salary" value="190000.00">
+            </div>
+            <div class="form-group">
+              <label>Currency</label>
+              <input type="text" id="emp-currency" value="BRL">
+            </div>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+            <div class="form-group">
+              <label>Compa-Ratio</label>
+              <input type="number" step="0.01" id="emp-compa" value="0.86">
+            </div>
+            <div class="form-group">
+              <label>Performance Rating</label>
+              <select id="emp-rating">
+                <option value="EXCEEDS">EXCEEDS</option>
+                <option value="MEETS_HIGH">MEETS_HIGH</option>
+                <option value="MEETS">MEETS</option>
+                <option value="NEEDS_IMPROVEMENT">NEEDS_IMPROVEMENT</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Proposed Base Salary Override (Optional Manual Exception)</label>
+            <input type="number" id="emp-override" placeholder="Leave empty for automated agent matrix calculation">
+          </div>
+
+          <button id="run-mesh-btn" class="btn-primary">🚀 Run Multi-Agent Mesh</button>
+        </div>
+
+        <!-- Right: Real-time Output & Slack HITL Gate -->
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📋 State Machine & Executive Review</div>
+          </div>
+
+          <!-- Slack Interactive HITL Card Simulation -->
+          <div id="slack-hitl-container" style="display: none; margin-bottom: 1rem;">
+            <div class="slack-card">
+              <div class="slack-header">
+                <div class="slack-avatar">🤖</div>
+                <div>
+                  <span class="slack-sender">PeopleAgentMesh Bot</span>
+                  <span class="slack-time">Just now · Approvals Channel</span>
+                </div>
+              </div>
+              <div class="slack-body">
+                <p><strong>⚠️ Human-In-The-Loop Approval Required</strong></p>
+                <p style="color: var(--text-secondary); font-size: 0.8rem; margin: 0.25rem 0;" id="slack-reason">High merit increase: 10.0%; Level promotion requested: IC4 -> IC5</p>
+                <div style="display: flex; gap: 0.5rem; margin-top: 0.5rem;">
+                  <span class="badge badge-amber" id="slack-risk">Risk: 80%</span>
+                  <span class="badge badge-purple" id="slack-role">Approver: VP_ENGINEERING</span>
+                </div>
+              </div>
+              <div class="slack-actions">
+                <button id="btn-approve" class="btn-approve">Approve Proposal</button>
+                <button id="btn-revise" class="btn-revise">Request Revision</button>
+                <button id="btn-reject" class="btn-reject">Reject Proposal</button>
+              </div>
+            </div>
+          </div>
+
+          <pre class="code-box" id="mesh-output">// Click 'Run Multi-Agent Mesh' to observe live DAG orchestration, PII tokenization, statutory verification, and HITL interruption...</pre>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 2: Privacy Gateway Playground -->
+    <section id="tab-privacy" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">🔒 Zero-Retention Privacy Gateway (Live Tokenizer Playground)</div>
+          <button id="btn-shred" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border: 1px solid #ef4444; padding: 0.3rem 0.75rem; border-radius: 6px; font-size: 0.8rem; cursor: pointer;">
+            🗑️ Shred Vault (LGPD Art. 18)
+          </button>
+        </div>
+        
+        <p style="color: var(--text-secondary); font-size: 0.85rem; margin-bottom: 1rem;">
+          Type or paste text containing Brazilian CPF, US SSN, Canadian SIN, or monetary compensation.
+          The gateway replaces sensitive identifiers with cryptographic surrogate tokens before entering external model context.
+        </p>
+
+        <div class="form-group">
+          <label>Raw Ingress Input Text</label>
+          <textarea id="pii-input" rows="4" class="mono">Employee Gabriel Santos (CPF 123.456.789-00, SSN 123-45-6789, SIN 123-456-789) currently earns R$ 190.000,00 with proposed base $209,000. Email: gabriel.santos@enterprise.internal.</textarea>
+        </div>
+
+        <button id="btn-tokenize" class="btn-primary" style="width: auto; margin-bottom: 1.5rem;">⚡ Tokenize Perimeter Boundary</button>
+
+        <div class="grid-2">
+          <div>
+            <label>Tokenized External Model View (Zero Sensitive PII)</label>
+            <pre class="code-box" id="pii-tokenized">// Tokenized payload will appear here...</pre>
+          </div>
+          <div>
+            <label>Rehydrated Internal Perimeter View</label>
+            <pre class="code-box" id="pii-restored">// Restored plaintext will appear here...</pre>
+          </div>
+        </div>
+        <div id="pii-status" style="margin-top: 1rem; font-weight: 600; font-size: 0.85rem;"></div>
+      </div>
+    </section>
+
+    <!-- Tab 3: CI Golden Benchmark Evals -->
+    <section id="tab-evals" class="tab-content">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">📊 CI Golden Benchmark Quality Gates</div>
+          <button id="btn-run-evals" class="btn-primary" style="width: auto;">▶️ Execute CI Golden Benchmarks</button>
+        </div>
+
+        <div class="metric-row">
+          <div class="metric-pill">
+            <div class="metric-val" id="eval-acc">100.0%</div>
+            <div class="metric-lbl">Accuracy Rate</div>
+          </div>
+          <div class="metric-pill">
+            <div class="metric-val" id="eval-comp">100.0%</div>
+            <div class="metric-lbl">Labor Compliance</div>
+          </div>
+          <div class="metric-pill">
+            <div class="metric-val" id="eval-hitl">100.0%</div>
+            <div class="metric-lbl">HITL Routing Precision</div>
+          </div>
+          <div class="metric-pill">
+            <div class="metric-val" id="eval-gate" style="color: var(--accent-green);">🟢 PASS</div>
+            <div class="metric-lbl">CI Merge Gate Status</div>
+          </div>
+        </div>
+
+        <pre class="code-box" id="eval-output">// Click 'Execute CI Golden Benchmarks' to evaluate edge cases across Brazil, US, and Canada...</pre>
+      </div>
+    </section>
+
+    <!-- Tab 4: Architecture & ADRs -->
+    <section id="tab-docs" class="tab-content">
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">🏛️ Architectural Decision Records (ADRs)</div>
+          </div>
+          <div style="font-size: 0.9rem; line-height: 1.6;">
+            <p><strong><a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/ADR-001-stateful-orchestration.md" target="_blank" style="color: var(--accent-cyan);">ADR-001: Stateful Graph Orchestration vs. Autonomous ReAct Loops</a></strong></p>
+            <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Why high-stakes enterprise HR requires deterministic state machines with JSON snapshot checkpointing over open-ended ReAct loops.</p>
+
+            <p><strong><a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/ADR-002-zero-retention-privacy-gateway.md" target="_blank" style="color: var(--accent-cyan);">ADR-002: Zero-Retention Privacy Gateway & PII Tokenization</a></strong></p>
+            <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Perimeter ingress surrogate tokenization for Brazil LGPD, US FLSA, and Canadian PIPEDA with cryptographic shredding.</p>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">📜 Enterprise Standards & RFCs</div>
+          </div>
+          <div style="font-size: 0.9rem; line-height: 1.6;">
+            <p><strong><a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/RFC-001-enterprise-agent-standards.md" target="_blank" style="color: var(--accent-cyan);">RFC-001: Enterprise Agent Standards & Tool Contract Specification</a></strong></p>
+            <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Formal guidelines for <code>AgentSpec</code>, <code>ToolSpec</code>, sliding-window circuit breakers, and CI eval merge gates.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script src="/static/app.js"></script>
+</body>
+</html>

@@ -29,11 +29,18 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
+ui = [
+    "fastapi>=0.100.0",
+    "uvicorn>=0.20.0",
+]
 dev = [
     "pytest>=8.0.0",
     "pytest-cov>=5.0.0",
     "mypy>=1.10.0",
     "ruff>=0.5.0",
+    "fastapi>=0.100.0",
+    "uvicorn>=0.20.0",
+    "httpx>=0.24.0",
 ]
 
 [project.scripts]
@@ -41,6 +48,9 @@ people-mesh = "people_agent_mesh.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"people_agent_mesh.ui.static" = ["*"]
 
 [tool.ruff]
 line-length = 100

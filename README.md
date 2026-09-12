@@ -131,10 +131,23 @@ cd people-agent-mesh
 pip install -e ".[dev]"
 ```
 
-### 2. Run the End-to-End Talent Calibration Demo
+### 2. Launch the Live Interactive Web Showcase UI
+Launch the interactive web dashboard and REST API locally:
+```bash
+people-mesh --ui
+# or: python -m people_agent_mesh.cli --ui
+```
+Navigate to `http://127.0.0.1:8000` to interact with:
+- **Live Multi-Agent DAG Visualizer**: Watch pipeline node states animate in real time across Ingress, PII Tokenizer, Supervisor, Sub-Agents, Compliance, and HITL Gate.
+- **Simulated Slack Interactive HITL Card**: When risk criteria trigger an interrupt, an executive approval card appears with `[Approve]`, `[Request Revision]`, and `[Reject]` actions that resume the state machine in real-time.
+- **Zero-Retention Privacy Playground**: Interactive side-by-side text scrubber for Brazilian CPF, US SSN, Canadian SIN, and compensation, plus one-click LGPD Article 18 cryptographic vault shredding.
+- **CI Golden Benchmark Evals**: Live execution runner reporting accuracy, statutory compliance, and latency metrics.
+
+### 3. Run the End-to-End Talent Calibration CLI Demo
 Demonstrates multi-agent routing, PII tokenization, statutory CLT verification, Slack HITL interruption, and executive sign-off:
 ```bash
-python -m people_agent_mesh.cli --demo
+people-mesh --demo
+# or: python -m people_agent_mesh.cli --demo
 ```
 
 **Output Trace:**
@@ -188,9 +201,10 @@ python -m people_agent_mesh.cli --demo
 =================================================================
 ```
 
-### 3. Run the CI Benchmark Evaluation Suite
+### 4. Run the CI Benchmark Evaluation Suite
 ```bash
-python -m people_agent_mesh.cli --evals
+people-mesh --evals
+# or: python -m people_agent_mesh.cli --evals
 ```
 
 ```text

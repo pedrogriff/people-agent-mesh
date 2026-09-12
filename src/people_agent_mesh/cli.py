@@ -64,7 +64,7 @@ def run_demo() -> None:
     print("=================================================================\n")
 
     # 1. Setup sample hierarchy
-    hierarchy = ReportingHierarchy(manager_to_reports={"MGR-EXEC-01": ["EMP-BR-8821"]})
+    hierarchy = ReportingHierarchy({"MGR-EXEC-01": ["EMP-BR-8821"]})
     abac = ABACSecurityEngine(hierarchy)
     privacy = ZeroRetentionPrivacyGateway()
     tracer = MeshTelemetryTracer()
@@ -187,15 +187,34 @@ def run_demo() -> None:
     print("=================================================================")
 
 
+def run_ui(host: str = "127.0.0.1", port: int = 8000) -> None:
+    import uvicorn
+
+    print("=================================================================")
+    print("  PEOPLE-AGENT-MESH: LIVE ENTERPRISE WEB SHOWCASE")
+    print(f"  Serving Interactive Dashboard & REST API at http://{host}:{port}")
+    print("=================================================================\n")
+    uvicorn.run("people_agent_mesh.server:app", host=host, port=port, reload=False)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description="PeopleAgentMesh Staff CLI")
     parser.add_argument("--evals", action="store_true", help="Execute CI evaluation suite")
     parser.add_argument(
         "--demo", action="store_true", help="Run end-to-end talent calibration showcase"
     )
+    parser.add_argument(
+        "--ui", action="store_true", help="Launch interactive web showcase dashboard"
+    )
+    parser.add_argument(
+        "--host", type=str, default="127.0.0.1", help="Server host (default: 127.0.0.1)"
+    )
+    parser.add_argument("--port", type=int, default=8000, help="Server port (default: 8000)")
     args = parser.parse_args()
 
-    if args.evals:
+    if args.ui:
+        run_ui(host=args.host, port=args.port)
+    elif args.evals:
         run_evals()
     else:
         run_demo()
