@@ -207,12 +207,26 @@ def main() -> None:
         "--ui", action="store_true", help="Launch interactive web showcase dashboard"
     )
     parser.add_argument(
+        "--mcp",
+        action="store_true",
+        help="Launch Model Context Protocol (MCP) server over stdio (Claude Desktop / Cursor)",
+    )
+    parser.add_argument(
+        "--mcp-sse",
+        action="store_true",
+        help="Launch Model Context Protocol (MCP) server over HTTP/SSE",
+    )
+    parser.add_argument(
         "--host", type=str, default="127.0.0.1", help="Server host (default: 127.0.0.1)"
     )
     parser.add_argument("--port", type=int, default=8000, help="Server port (default: 8000)")
     args = parser.parse_args()
 
-    if args.ui:
+    if args.mcp:
+        from people_agent_mesh.mcp.stdio import run_stdio_server
+
+        run_stdio_server()
+    elif args.mcp_sse or args.ui:
         run_ui(host=args.host, port=args.port)
     elif args.evals:
         run_evals()

@@ -7,6 +7,7 @@
 [![Privacy: Zero-Retention](https://img.shields.io/badge/Privacy-LGPD%20%7C%20PIPEDA%20%7C%20FLSA-purple.svg)](docs/ADR-002-zero-retention-privacy-gateway.md)
 [![Observability: OpenTelemetry](https://img.shields.io/badge/Observability-OpenTelemetry%20GenAI-F46800.svg)](src/people_agent_mesh/telemetry/tracer.py)
 [![Test Coverage: 100% Core](https://img.shields.io/badge/coverage-100%25%20core-brightgreen.svg)](tests/)
+[![MCP Server](https://img.shields.io/badge/MCP-Protocol%202024--11--05-8A2BE2.svg)](docs/MCP-SERVER-GUIDE.md)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-playgriff.me-blue?style=flat&logo=googlechrome&logoColor=white)](https://playgriff.me/people-agent-mesh/)
 
 > **Staff Software Engineer Showcase System**: A production-grade multi-agent orchestration, human-in-the-loop (HITL) governance, and evaluation platform designed specifically for sensitive **People Operations, Compensation Planning, and Talent Calibration** across **Brazil (🇧🇷), the United States (🇺🇸), and Canada (🇨🇦)**.
@@ -231,6 +232,19 @@ people-mesh --evals
 -----------------------------------------------------------------
 ```
 
+### 5. Model Context Protocol (MCP) Server (Claude Desktop & Cursor)
+Expose verified compensation engines, CLT compliance verifiers, and PII vaults to AI coding agents via standardized JSON-RPC 2.0:
+
+```bash
+# Stdio transport for Claude Desktop / Cursor
+people-mesh --mcp
+
+# HTTP / Server-Sent Events (SSE) for Kubernetes / microservices
+people-mesh --mcp-sse --port 8080
+```
+
+See [docs/MCP-SERVER-GUIDE.md](docs/MCP-SERVER-GUIDE.md) for full configuration steps and `claude_desktop_config.json` snippets.
+
 ---
 
 ## 📚 Staff Technical Leadership & Standards
@@ -238,6 +252,7 @@ people-mesh --evals
 This repository serves as an enterprise standard and architectural reference:
 - **[ADR-001: Stateful Graph Orchestration vs. Autonomous ReAct Loops](docs/ADR-001-stateful-orchestration.md)**: Architectural analysis of determinism, state serialization, and crash-resilient HITL.
 - **[ADR-002: Zero-Retention Privacy Gateway](docs/ADR-002-zero-retention-privacy-gateway.md)**: Cryptographic surrogate tokenization and LGPD Article 18 right-to-be-forgotten design.
+- **[ADR-004: Standardizing on Model Context Protocol (MCP)](docs/ADR-004-model-context-protocol-standard.md)**: Exposing deterministic People operations tools as standardized MCP endpoints over stdio and HTTP/SSE.
 - **[RFC-001: Enterprise Agent Standards](docs/RFC-001-enterprise-agent-standards.md)**: Guidelines for `AgentSpec`, `ToolSpec`, circuit breaking, and CI quality gates adopted across engineering teams.
 
 ---

@@ -28,6 +28,7 @@ from people_agent_mesh.core.state import (
     WorkflowType,
 )
 from people_agent_mesh.evals.runner import EvalSuiteRunner
+from people_agent_mesh.mcp.sse import router as mcp_router
 from people_agent_mesh.security.abac import ABACSecurityEngine, ReportingHierarchy
 from people_agent_mesh.security.tokenizer import PIITokenVault, ZeroRetentionPrivacyGateway
 from people_agent_mesh.telemetry.tracer import MeshTelemetryTracer
@@ -45,6 +46,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount Model Context Protocol (MCP) Server Router
+app.include_router(mcp_router)
 
 # Shared In-Memory State & Singletons
 vault = PIITokenVault()
