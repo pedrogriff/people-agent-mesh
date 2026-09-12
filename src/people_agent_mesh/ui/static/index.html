@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PeopleAgentMesh: Enterprise Multi-Agent Orchestration Platform</title>
-  <link rel="stylesheet" href="/static/styles.css">
+  <title>PeopleAgentMesh: Enterprise Multi-Agent Orchestration Platform | playgriff.me</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -14,14 +14,16 @@
       <div class="brand-icon">⚡</div>
       <div class="brand-title">
         <h1>PeopleAgentMesh Platform</h1>
-        <p>Enterprise Multi-Agent Orchestration & Human-in-the-Loop Governance</p>
+        <p>Enterprise Multi-Agent Orchestration & Human-in-the-Loop Governance | by Pedro</p>
       </div>
     </div>
     <div class="header-badges">
+      <a href="../" class="badge badge-purple" style="text-decoration: none; cursor: pointer;">← Back to playgriff.me</a>
       <span class="badge badge-green"><span class="badge-pulse"></span> Mesh Engine Live</span>
       <span class="badge badge-blue">🇧🇷 CLT/LGPD</span>
       <span class="badge badge-amber">🇺🇸 FLSA</span>
       <span class="badge badge-purple">🇨🇦 PIPEDA</span>
+      <a href="https://github.com/pedrogriff/people-agent-mesh" target="_blank" rel="noopener" class="badge badge-blue" style="text-decoration: none;">GitHub ↗</a>
     </div>
   </header>
 
@@ -29,6 +31,7 @@
   <nav class="tab-nav">
     <button class="tab-btn active" data-tab="tab-orchestrator">🤖 Multi-Agent Orchestrator & HITL</button>
     <button class="tab-btn" data-tab="tab-privacy">🔒 Zero-Retention Privacy Gateway</button>
+    <button class="tab-btn" data-tab="tab-mcp">🔌 Model Context Protocol (MCP)</button>
     <button class="tab-btn" data-tab="tab-evals">📊 CI Golden Benchmark Evals</button>
     <button class="tab-btn" data-tab="tab-docs">📚 Architecture & ADRs</button>
   </nav>
@@ -238,7 +241,70 @@
       </div>
     </section>
 
-    <!-- Tab 3: CI Golden Benchmark Evals -->
+    <!-- Tab 3: Model Context Protocol (MCP) Server -->
+    <section id="tab-mcp" class="tab-content">
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-header">
+          <div class="card-title">🔌 Model Context Protocol (MCP) Server Explorer</div>
+          <span class="badge badge-purple">JSON-RPC 2.0 • Protocol 2024-11-05</span>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+          Expose verified compensation engines, Brazilian CLT compliance verifiers, and Zero-Retention PII vaults directly to AI coding agents (Claude Desktop, Cursor, Antigravity) via standardized JSON-RPC 2.0 over Stdio and HTTP/SSE transports.
+        </p>
+
+        <div class="grid-2">
+          <!-- Left: Select Tool & Parameters -->
+          <div>
+            <div class="form-group">
+              <label>Select MCP Method / Tool Preset:</label>
+              <select id="mcp-select-preset" class="form-control">
+                <option value="validate_clt_ok">Tool: validate_clt_compliance (Compliant Merit 240k -> 260k)</option>
+                <option value="validate_clt_fail">Tool: validate_clt_compliance (VIOLATION: Unilateral Reduction 300k -> 250k)</option>
+                <option value="resolve_band">Tool: resolve_salary_band (IC5 Software Engineering @ BR_SP)</option>
+                <option value="calc_compa">Tool: calculate_compa_ratio (Base: 285k, Mid: 300k, Min: 240k, Max: 360k)</option>
+                <option value="eval_merit">Tool: evaluate_merit_proposal (IC5, EXCEEDS rating, Brazil)</option>
+                <option value="tools_list">RPC: tools/list (Discover All Registered Schemas)</option>
+                <option value="resources_list">RPC: resources/list (Read Statutory Labor Policies)</option>
+                <option value="prompts_list">RPC: prompts/list (Discover Standard Prompt Templates)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>JSON-RPC 2.0 Request Frame (Editable):</label>
+              <textarea id="mcp-request-frame" class="form-control" rows="8" style="font-family: monospace; font-size: 0.82rem;"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem;">
+              <button id="btn-dispatch-mcp" class="btn-primary">⚡ Dispatch JSON-RPC Frame</button>
+            </div>
+          </div>
+
+          <!-- Right: Response Frame & Client Snippet -->
+          <div>
+            <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; display: block;">
+              JSON-RPC 2.0 Response Frame (<span id="mcp-latency">0.0 ms</span>):
+            </label>
+            <pre class="code-box" id="mcp-response-frame" style="max-height: 260px; overflow-y: auto;">// Click 'Dispatch JSON-RPC Frame' to test execution...</pre>
+
+            <div style="margin-top: 1rem;">
+              <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.5rem; display: block;">
+                Claude Desktop Configuration (<code>claude_desktop_config.json</code>):
+              </label>
+              <pre class="code-box" style="font-size: 0.78rem; padding: 0.6rem;">{
+  "mcpServers": {
+    "people-mesh": {
+      "command": "people-mesh",
+      "args": ["--mcp"]
+    }
+  }
+}</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tab 4: CI Golden Benchmark Evals -->
     <section id="tab-evals" class="tab-content">
       <div class="card">
         <div class="card-header">
@@ -282,6 +348,9 @@
 
             <p><strong><a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/ADR-002-zero-retention-privacy-gateway.md" target="_blank" style="color: var(--accent-cyan);">ADR-002: Zero-Retention Privacy Gateway & PII Tokenization</a></strong></p>
             <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Perimeter ingress surrogate tokenization for Brazil LGPD, US FLSA, and Canadian PIPEDA with cryptographic shredding.</p>
+
+            <p><strong><a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/ADR-004-model-context-protocol-standard.md" target="_blank" style="color: var(--accent-cyan);">ADR-004: Standardizing on Model Context Protocol (MCP)</a></strong></p>
+            <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Exposing deterministic People operations tools as standardized MCP JSON-RPC 2.0 endpoints over stdio and HTTP/SSE. See <a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/MCP-SERVER-GUIDE.md" target="_blank" style="color: var(--accent-cyan);">MCP Server Integration Guide</a>.</p>
           </div>
         </div>
 
@@ -299,6 +368,6 @@
 
   </main>
 
-  <script src="/static/app.js"></script>
+  <script src="app.js"></script>
 </body>
 </html>
