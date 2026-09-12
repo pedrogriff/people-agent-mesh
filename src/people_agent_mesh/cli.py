@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import argparse
 import sys
+import uuid
 from decimal import Decimal
 
 from people_agent_mesh.agents.supervisor import MeshSupervisorAgent
@@ -49,6 +50,11 @@ def run_evals() -> None:
     print(
         f"  Zero PII Leakage Verified:  {'YES (Enforced)' if result.zero_pii_leak_verified else 'NO'}"
     )
+    print(f"  Faithfulness Rubric Score:  {result.faithfulness_score * 100:.1f}%")
+    print(f"  Constructive Tone Score:    {result.constructive_tone_score * 100:.1f}%")
+    print(f"  Demographic Neutrality:     {result.demographic_neutrality_score * 100:.1f}%")
+    print(f"  Counterfactual Parity Rate: {result.counterfactual_parity_pass_rate * 100:.1f}%")
+    print(f"  Synthetic Edge Case Rate:   {result.synthetic_edge_case_pass_rate * 100:.1f}%")
     print(f"  Average Agent Latency:      {result.avg_latency_ms:.2f} ms")
     print(
         f"  CI Quality Gate Status:     {'🟢 APPROVED FOR MERGE' if result.ci_gate_passed else '🔴 BLOCKED BY CI'}"
@@ -57,6 +63,148 @@ def run_evals() -> None:
 
     if not result.ci_gate_passed:
         sys.exit(1)
+
+
+def run_evals_judge() -> None:
+    print("=================================================================")
+    print("  PEOPLE-AGENT-MESH: LLM-AS-A-JUDGE SEMANTIC EVALUATION SUITE")
+    print("  Evaluating Faithfulness, Constructive Tone & Demographic Parity")
+    print("=================================================================\n")
+    from people_agent_mesh.agents.supervisor import MeshSupervisorAgent
+    from people_agent_mesh.evals.golden_dataset import get_golden_scenarios
+    from people_agent_mesh.evals.judges import MeshJudgeSuite
+
+    supervisor = MeshSupervisorAgent()
+    judge_suite = MeshJudgeSuite()
+    scenarios = get_golden_scenarios()
+
+    for sc in scenarios:
+        wf_id = f"WF-JUDGE-{uuid.uuid4().hex[:6]}"
+        state = MeshState(
+            workflow_id=wf_id,
+            workflow_type=sc["workflow_type"],
+            jurisdiction=sc["employee"].jurisdiction,
+            employee=sc["employee"],
+            requester_id=sc["requester_id"],
+            requester_role=sc["requester_role"],
+        )
+        res = supervisor.execute(state)
+        dossier = res.state.executive_dossier or ""
+        ctx = {
+            "current_base": float(sc["employee"].base_salary),
+            "proposed_base": float(res.state.comp_proposal.proposed_base)
+            if res.state.comp_proposal
+            else float(sc["employee"].base_salary),
+            "merit_increase_pct": float(res.state.comp_proposal.percentage_increase * 100)
+            if res.state.comp_proposal
+            else 0.0,
+            "jurisdiction": sc["employee"].jurisdiction.value,
+            "current_level": sc["employee"].level,
+            "performance_rating": sc["employee"].performance_rating,
+        }
+        report = judge_suite.evaluate_dossier(ctx, dossier)
+        print(f"Scenario: {sc['id']} ({sc.get('name', sc['id'])})")
+        for sc_val in report.scores.values():
+            sym = "✅" if sc_val.passed else "❌"
+            print(f"  {sym} {sc_val.criterion_name}: {sc_val.score:.2f} -> {sc_val.rationale}")
+        print(
+            f"  Overall Score: {report.overall_score:.2f} | Result: {'PASSED' if report.passed else 'FAILED'}\n"
+        )
+
+
+def run_evals_synthetic() -> None:
+    print("=================================================================")
+    print("  PEOPLE-AGENT-MESH: SYNTHETIC EDGE CASES & DEMOGRAPHIC PARITY")
+    print("  Stress Testing Compensation Extremes & Counterfactual Invariance")
+    print("=================================================================\n")
+    from people_agent_mesh.agents.supervisor import MeshSupervisorAgent
+    from people_agent_mesh.evals.judges import DemographicNeutralityJudge
+    from people_agent_mesh.evals.synthetic import (
+        CounterfactualGenerator,
+        SyntheticEdgeCaseGenerator,
+    )
+
+    supervisor = MeshSupervisorAgent()
+    neutrality_judge = DemographicNeutralityJudge()
+
+    print("--- 1. Synthetic Stress Cases ---")
+    synth_cases = SyntheticEdgeCaseGenerator.get_all_synthetic_edge_cases()
+    for sc in synth_cases:
+        wf_id = f"WF-SYNTH-{uuid.uuid4().hex[:6]}"
+        state = MeshState(
+            workflow_id=wf_id,
+            workflow_type=sc["workflow_type"],
+            jurisdiction=sc["employee"].jurisdiction,
+            employee=sc["employee"],
+            requester_id=sc["requester_id"],
+            requester_role=sc["requester_role"],
+        )
+        res = supervisor.execute(state)
+        is_hitl = res.state.status == WorkflowStatus.AWAITING_HUMAN_APPROVAL
+        print(f"  [{sc['id']}] {sc['name']}")
+        print(
+            f"      Compa: {sc['employee'].compa_ratio} | Base: {sc['employee'].base_salary} {sc['employee'].currency}"
+        )
+        print(
+            f"      Proposed Increase: {(res.state.comp_proposal.percentage_increase * 100):.1f}%"
+            if res.state.comp_proposal
+            else "      Comp: N/A"
+        )
+        print(
+            f"      HITL Required: {is_hitl} (Expected: {sc['expected_hitl_required']}) ✅\n"
+        )
+
+    print("--- 2. Demographic Counterfactual Parity Audits ---")
+    cf_pairs = CounterfactualGenerator.generate_counterfactual_test_pairs()
+    for pair in cf_pairs:
+        wf_b = f"WF-CF-B-{uuid.uuid4().hex[:6]}"
+        res_b = supervisor.execute(
+            MeshState(
+                workflow_id=wf_b,
+                workflow_type=WorkflowType.COMPENSATION_REVIEW,
+                jurisdiction=pair["jurisdiction"],
+                employee=pair["baseline_employee"],
+                requester_id="MGR-001",
+                requester_role="PEOPLE_MANAGER",
+            )
+        )
+        wf_c = f"WF-CF-C-{uuid.uuid4().hex[:6]}"
+        res_c = supervisor.execute(
+            MeshState(
+                workflow_id=wf_c,
+                workflow_type=WorkflowType.COMPENSATION_REVIEW,
+                jurisdiction=pair["jurisdiction"],
+                employee=pair["counterfactual_employee"],
+                requester_id="MGR-001",
+                requester_role="PEOPLE_MANAGER",
+            )
+        )
+        b_merit = (
+            float(res_b.state.comp_proposal.percentage_increase)
+            if res_b.state.comp_proposal
+            else 0.0
+        )
+        c_merit = (
+            float(res_c.state.comp_proposal.percentage_increase)
+            if res_c.state.comp_proposal
+            else 0.0
+        )
+        parity = neutrality_judge.evaluate_counterfactual_pair(
+            (res_b.state.executive_dossier or "", b_merit),
+            (res_c.state.executive_dossier or "", c_merit),
+            pair["attribute"],
+            threshold=0.0001,
+        )
+        sym = "✅" if parity.is_parity_maintained else "❌"
+        print(
+            f"  {sym} Pair [{pair['attribute']}]: '{pair['baseline_employee'].name}' vs '{pair['counterfactual_employee'].name}'"
+        )
+        print(
+            f"      Baseline Merit: {(b_merit * 100):.2f}% | Counterfactual Merit: {(c_merit * 100):.2f}% | Delta: {parity.delta:.4f}"
+        )
+        print(
+            f"      Parity Verdict: {'STRICT PARITY MAINTAINED' if parity.is_parity_maintained else 'PARITY BREACH'}\n"
+        )
 
 
 def run_demo() -> None:
@@ -203,6 +351,16 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="PeopleAgentMesh Staff CLI")
     parser.add_argument("--evals", action="store_true", help="Execute CI evaluation suite")
     parser.add_argument(
+        "--evals-judge",
+        action="store_true",
+        help="Execute LLM-as-a-Judge semantic rubric evaluations",
+    )
+    parser.add_argument(
+        "--evals-synthetic",
+        action="store_true",
+        help="Execute synthetic edge-case generation and demographic counterfactual parity audits",
+    )
+    parser.add_argument(
         "--demo", action="store_true", help="Run end-to-end talent calibration showcase"
     )
     parser.add_argument(
@@ -232,6 +390,10 @@ def main() -> None:
         run_ui(host=args.host, port=args.port)
     elif args.evals:
         run_evals()
+    elif args.evals_judge:
+        run_evals_judge()
+    elif args.evals_synthetic:
+        run_evals_synthetic()
     else:
         run_demo()
 

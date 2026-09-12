@@ -70,8 +70,26 @@ class MeshSupervisorAgent(BaseAgent):
                 risk_score += 0.25
                 reasons.append("Merit increase >= 7%")
 
-            # Compa-ratio out of band
-            if state.comp_proposal.compa_ratio_after > Decimal("1.15"):
+            # Compa-ratio out of band governance
+            if (
+                state.comp_proposal.compa_ratio_after >= Decimal("1.20")
+                or state.employee.compa_ratio >= Decimal("1.20")
+            ):
+                risk_score += 0.40
+                reasons.append(
+                    "Severe Red-Circle compensation (compa-ratio >= 1.20) requires executive exception approval"
+                )
+                required_role = "PEOPLE_PARTNER"
+            elif (
+                state.comp_proposal.compa_ratio_after < Decimal("0.75")
+                or state.employee.compa_ratio < Decimal("0.75")
+            ):
+                risk_score += 0.40
+                reasons.append(
+                    "Severe Green-Circle underpayment (compa-ratio < 0.75) requires equity correction review"
+                )
+                required_role = "PEOPLE_PARTNER"
+            elif state.comp_proposal.compa_ratio_after > Decimal("1.15"):
                 risk_score += 0.20
                 reasons.append("Post-increase compa-ratio exceeds 1.15 (upper band boundary)")
 
@@ -95,6 +113,56 @@ class MeshSupervisorAgent(BaseAgent):
             "; ".join(reasons) if reasons else "Routine calibration",
             required_role,
         )
+
+    @staticmethod
+    def format_executive_dossier(state: MeshState) -> str:
+        """
+        Synthesizes an end-to-end executive briefing summarizing:
+        - Employee profile and career trajectory
+        - Quantitative compensation rationale and band positioning
+        - Statutory compliance checks (CLT / FLSA / PIPEDA)
+        - Strategic impact and forward-looking developmental recommendations
+        """
+        parts: list[str] = [
+            f"Candidate Level: {state.employee.level} ({state.employee.job_title} in {state.employee.department}).",
+            f"Jurisdiction: {state.jurisdiction.value} (Statutory Labor Framework: {'Brazil CLT Art. 468' if state.jurisdiction.value == 'BRAZIL' else ('US FLSA Statutory Overtime' if state.jurisdiction.value == 'UNITED_STATES' else 'Canada PIPEDA / Pay Equity')}).",
+            "Talent & Developmental Trajectory: Sustained performance reinforces expanded scope, cross-functional leverage, and growth opportunity aligned with strategic priorities.",
+        ]
+
+        if state.comp_proposal:
+            parts.append(
+                f"Compensation Proposal: Adjusted base from {state.employee.currency} {state.comp_proposal.current_base:,.2f} "
+                f"to {state.employee.currency} {state.comp_proposal.proposed_base:,.2f} "
+                f"(+{(state.comp_proposal.percentage_increase * 100):.1f}% merit increase). "
+                f"New compa-ratio: {state.comp_proposal.compa_ratio_after:.2f} relative to midpoint."
+            )
+            parts.append(f"Compensation Rationale: {state.comp_proposal.rationale}")
+
+        if state.promotion_proposal:
+            parts.append(
+                f"Promotion Trajectory: Recommended for promotion from {state.promotion_proposal.current_level} to {state.promotion_proposal.proposed_level} "
+                f"with readiness score of {state.promotion_proposal.readiness_score:.2f} based on demonstrated expanded scope and strategic cross-functional impact."
+            )
+            parts.append(f"Business Impact Summary: {state.promotion_proposal.business_impact_summary}")
+
+        comp_status = (
+            "PASSED"
+            if state.compliance_passed
+            else f"VIOLATIONS DETECTED: {', '.join(state.compliance_violations)}"
+        )
+        parts.append(f"Statutory Labor Compliance Status: {comp_status}.")
+
+        if state.status == WorkflowStatus.AWAITING_HUMAN_APPROVAL and state.approval_request:
+            parts.append(
+                f"Executive Review Action: Route to {state.approval_request.required_role} for review. "
+                f"Reason: {state.approval_request.triggered_reason}."
+            )
+        else:
+            parts.append(
+                "Executive Review Action: Recommend approval and endorse proposal for standard HRIS synchronization."
+            )
+
+        return "\n".join(parts)
 
     def execute(self, state: MeshState) -> AgentResult:
         start_time = time.time()
@@ -246,8 +314,12 @@ class MeshSupervisorAgent(BaseAgent):
                 details={"risk_score": risk_score},
             )
 
-        # 5. Post-Flight Tripwire Barrier: Assert zero canary leakage in outputs
-        texts_to_verify: list[str] = []
+        # 5. Executive Dossier Synthesis
+        dossier = self.format_executive_dossier(current_state)
+        current_state = current_state.model_copy(update={"executive_dossier": dossier})
+
+        # 6. Post-Flight Tripwire Barrier: Assert zero canary leakage in outputs
+        texts_to_verify: list[str] = [dossier]
         if current_state.comp_proposal:
             texts_to_verify.append(current_state.comp_proposal.rationale)
         if current_state.promotion_proposal:

@@ -44,6 +44,13 @@ class WorkflowType(StrEnum):
     FULL_TALENT_DOSSIER = "FULL_TALENT_DOSSIER"
 
 
+class PerformanceRating(StrEnum):
+    EXCEEDS = "EXCEEDS"
+    MEETS_HIGH = "MEETS_HIGH"
+    MEETS = "MEETS"
+    NEEDS_IMPROVEMENT = "NEEDS_IMPROVEMENT"
+
+
 class EmployeeProfile(BaseModel):
     model_config = ConfigDict(frozen=True)
 
@@ -129,6 +136,7 @@ class MeshState(BaseModel):
     # Ingestion & Context
     retrieved_documents: list[dict[str, Any]] = Field(default_factory=list)
     intermediate_artifacts: dict[str, Any] = Field(default_factory=dict)
+    executive_dossier: str | None = None
     audit_trail: list[AuditEntry] = Field(default_factory=list)
 
     # Security & Adversarial Defense
