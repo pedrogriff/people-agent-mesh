@@ -281,6 +281,13 @@ Convene a 4-agent dialectic calibration panel (Advocate, Skeptic/Bar-Raiser, Equ
 people-mesh --committee
 ```
 
+### 7. Durable Execution, Event Sourcing & Crash Recovery (ADR-007)
+Demonstrate event-sourced durable execution, SQLite WAL persistence, simulated process kill / pod termination, zero-loss crash recovery, and backward Saga rollbacks:
+
+```bash
+people-mesh --durable
+```
+
 ---
 
 ## 📚 Staff Technical Leadership & Standards
@@ -293,6 +300,7 @@ This repository serves as an enterprise standard and architectural reference:
 - **[ADR-004: Standardizing on Model Context Protocol (MCP)](docs/ADR-004-model-context-protocol-standard.md)**: Exposing deterministic People operations tools as standardized MCP endpoints over stdio and HTTP/SSE.
 - **[ADR-005: LLM-as-a-Judge Semantic Rubrics & Demographic Parity Auditing](docs/ADR-005-llm-as-a-judge-evals.md)**: Semantic evaluation framework for Faithfulness, Constructive Executive Tone, and Counterfactual Statistical Parity ($\Delta \le 0.0001$).
 - **[ADR-006: Multi-Agent Calibration Committee Deliberation & Reflexion Loops](docs/ADR-006-multi-agent-calibration-debate.md)**: Dialectic debate swarms (Advocate, Skeptic, Equity Auditor, Moderator) with verbal reinforcement and OKR self-correction.
+- **[ADR-007: Durable Execution Engine, Event Sourcing & Backward Saga Rollbacks](docs/ADR-007-durable-execution-and-saga-recovery.md)**: Append-only event streams, SQLite WAL persistence, crash recovery without LLM re-execution, backward saga compensations, and Temporal / Trigger.dev adapters.
 - **[RFC-001: Enterprise Agent Standards](docs/RFC-001-enterprise-agent-standards.md)**: Guidelines for `AgentSpec`, `ToolSpec`, circuit breaking, and CI quality gates adopted across engineering teams.
 
 ---

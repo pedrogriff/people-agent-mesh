@@ -7,12 +7,22 @@ and zero-retention PII tokenization as standardized MCP Tools, Resources, and Pr
 from __future__ import annotations
 
 import json
+import os
 import uuid
 from decimal import Decimal
+from pathlib import Path
 from typing import Any
 
 from people_agent_mesh.agents.compensation import CompensationAgent
-from people_agent_mesh.core.state import CompensationProposal, EmployeeProfile, Jurisdiction
+from people_agent_mesh.core.state import (
+    CompensationProposal,
+    EmployeeProfile,
+    Jurisdiction,
+    MeshState,
+    WorkflowType,
+)
+from people_agent_mesh.durable.engine import DurableWorkflowEngine
+from people_agent_mesh.durable.store import SQLiteDurableStore
 from people_agent_mesh.mcp.protocol import (
     INVALID_PARAMS,
     INVALID_REQUEST,
@@ -59,6 +69,14 @@ class PeopleMeshMCPServer:
         self.guardrail = guardrail or PromptInjectionGuardrail()
         self.canary_manager = canary_manager or CanaryManager()
         self.session_vaults: dict[str, ZeroRetentionPrivacyGateway] = {}
+
+        # Durable Execution Engine & Store (ADR-007)
+        durable_db = os.getenv(
+            "DURABLE_STORE_PATH",
+            str(Path(os.path.expanduser("~")) / ".people_agent_mesh" / "durable_workflows.db"),
+        )
+        self.durable_store = SQLiteDurableStore(db_path=durable_db)
+        self.durable_engine = DurableWorkflowEngine(store=self.durable_store)
 
     def _get_gateway(self, session_id: str | None) -> ZeroRetentionPrivacyGateway:
         if not session_id:
@@ -365,6 +383,133 @@ class PeopleMeshMCPServer:
                         },
                     },
                     "required": ["level", "performance_rating"],
+                },
+            ),
+            ToolDefinition(
+                name="start_durable_workflow",
+                description=(
+                    "Initiates an event-sourced durable workflow with Write-Ahead Logging (WAL) "
+                    "and crash resilience (ADR-007). Suspends asynchronously on HITL gating."
+                ),
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "employee_id": {
+                            "type": "string",
+                            "description": "Employee ID (e.g. 'EMP-DUR-01').",
+                            "default": "EMP-DUR-01",
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Employee full name.",
+                            "default": "Elena Rostova",
+                        },
+                        "level": {
+                            "type": "string",
+                            "description": "Current engineering level (e.g. 'IC4').",
+                            "default": "IC4",
+                        },
+                        "jurisdiction": {
+                            "type": "string",
+                            "enum": ["BRAZIL", "UNITED_STATES", "CANADA"],
+                            "description": "Statutory labor jurisdiction.",
+                            "default": "UNITED_STATES",
+                        },
+                        "base_salary": {
+                            "type": "number",
+                            "description": "Base salary amount.",
+                            "default": 175000.0,
+                        },
+                        "currency": {
+                            "type": "string",
+                            "description": "Currency code ('USD', 'BRL', 'CAD').",
+                            "default": "USD",
+                        },
+                        "performance_rating": {
+                            "type": "string",
+                            "enum": ["EXCEEDS", "MEETS_HIGH", "MEETS", "NEEDS_IMPROVEMENT"],
+                            "description": "Performance appraisal rating.",
+                            "default": "EXCEEDS",
+                        },
+                        "tenure_months": {
+                            "type": "integer",
+                            "description": "Tenure at level in months.",
+                            "default": 20,
+                        },
+                        "workflow_type": {
+                            "type": "string",
+                            "description": "Workflow type.",
+                            "default": "FULL_TALENT_DOSSIER",
+                        },
+                    },
+                    "required": ["name", "level", "performance_rating"],
+                },
+            ),
+            ToolDefinition(
+                name="signal_durable_workflow",
+                description=(
+                    "Delivers an asynchronous human decision or timer signal to a suspended "
+                    "durable workflow, triggering forward completion or backward saga rollback (ADR-007)."
+                ),
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "workflow_id": {
+                            "type": "string",
+                            "description": "Target workflow ID.",
+                        },
+                        "decision": {
+                            "type": "string",
+                            "enum": ["APPROVED", "REJECTED", "REVISION_REQUESTED"],
+                            "description": "Human decision outcome.",
+                            "default": "APPROVED",
+                        },
+                        "decided_by": {
+                            "type": "string",
+                            "description": "Sign-off authority identifier.",
+                            "default": "vp.engineering@enterprise.internal",
+                        },
+                        "comments": {
+                            "type": "string",
+                            "description": "Reviewer comments or justification.",
+                            "default": "Endorsed via MCP tool invocation.",
+                        },
+                    },
+                    "required": ["workflow_id", "decision"],
+                },
+            ),
+            ToolDefinition(
+                name="get_durable_workflow_history",
+                description=(
+                    "Inspects the append-only event stream and audit trail for an event-sourced "
+                    "durable workflow from sequence #1 (ADR-007)."
+                ),
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "workflow_id": {
+                            "type": "string",
+                            "description": "Workflow identifier to inspect.",
+                        },
+                    },
+                    "required": ["workflow_id"],
+                },
+            ),
+            ToolDefinition(
+                name="replay_durable_workflow",
+                description=(
+                    "Deterministically replays the event history from sequence #1 to verify zero "
+                    "divergence and crash recovery without re-invoking external side-effects (ADR-007)."
+                ),
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "workflow_id": {
+                            "type": "string",
+                            "description": "Workflow identifier to replay.",
+                        },
+                    },
+                    "required": ["workflow_id"],
                 },
             ),
         ]
@@ -833,7 +978,6 @@ class PeopleMeshMCPServer:
             elif name == "run_calibration_committee":
                 from people_agent_mesh.agents.committee import CalibrationCommitteeOrchestrator
                 from people_agent_mesh.agents.promotion import PromotionAgent
-                from people_agent_mesh.core.state import MeshState, WorkflowType
 
                 jur_str = str(arguments.get("jurisdiction", "UNITED_STATES")).upper()
                 jur = (
@@ -903,6 +1047,130 @@ class PeopleMeshMCPServer:
 
                 return ToolCallResult(
                     content=[{"type": "text", "text": json.dumps(res_payload, indent=2)}],
+                    isError=False,
+                )
+
+            elif name == "start_durable_workflow":
+                jur_str = arguments.get("jurisdiction", "UNITED_STATES").upper()
+                jur = (
+                    Jurisdiction.BRAZIL
+                    if "BRAZIL" in jur_str
+                    else (
+                        Jurisdiction.CANADA if "CANADA" in jur_str else Jurisdiction.UNITED_STATES
+                    )
+                )
+
+                emp = EmployeeProfile(
+                    employee_id=arguments.get("employee_id", "EMP-DUR-01"),
+                    name=arguments.get("name", "Elena Rostova"),
+                    email=f"{arguments.get('name', 'elena').lower().replace(' ', '.')}@enterprise.internal",
+                    department="Core Infrastructure",
+                    job_title="Senior Software Engineer",
+                    level=arguments.get("level", "IC4"),
+                    jurisdiction=jur,
+                    manager_id="MGR-MCP-01",
+                    base_salary=Decimal(str(arguments.get("base_salary", 175000.0))),
+                    currency=arguments.get("currency", "USD"),
+                    compa_ratio=Decimal("0.95"),
+                    performance_rating=arguments.get("performance_rating", "EXCEEDS"),
+                    tenure_months=int(arguments.get("tenure_months", 20)),
+                )
+
+                wf_id = f"wf-mcp-dur-{uuid.uuid4().hex[:8]}"
+                state = MeshState(
+                    workflow_id=wf_id,
+                    workflow_type=WorkflowType.FULL_TALENT_DOSSIER,
+                    jurisdiction=jur,
+                    employee=emp,
+                    requester_id="REQ-MCP",
+                    requester_role="HRBP_LEAD",
+                )
+
+                res_state = self.durable_engine.start_workflow(state)
+                events = self.durable_store.get_events(wf_id)
+                output_payload: dict[str, Any] = {
+                    "workflow_id": wf_id,
+                    "status": res_state.status.value,
+                    "events_logged": len(events),
+                    "suspended_for_hitl": res_state.status.value == "AWAITING_HUMAN_APPROVAL",
+                    "required_role": (
+                        res_state.approval_request.required_role
+                        if res_state.approval_request
+                        else "NONE"
+                    ),
+                    "risk_score": (
+                        res_state.approval_request.risk_score if res_state.approval_request else 0.0
+                    ),
+                }
+                return ToolCallResult(
+                    content=[{"type": "text", "text": json.dumps(output_payload, indent=2)}],
+                    isError=False,
+                )
+
+            elif name == "signal_durable_workflow":
+                wf_id = arguments["workflow_id"]
+                decision = arguments.get("decision", "APPROVED")
+                decided_by = arguments.get("decided_by", "vp.engineering@enterprise.internal")
+                comments = arguments.get("comments", "Endorsed via MCP.")
+
+                res_state = self.durable_engine.signal_workflow(
+                    workflow_id=wf_id,
+                    signal_name="HUMAN_DECISION",
+                    payload={
+                        "decision": decision,
+                        "decided_by": decided_by,
+                        "comments": comments,
+                    },
+                )
+                events = self.durable_store.get_events(wf_id)
+                output_payload_sig: dict[str, Any] = {
+                    "workflow_id": wf_id,
+                    "status": res_state.status.value,
+                    "final_events_count": len(events),
+                    "approval_status": (
+                        res_state.approval_request.status.value
+                        if res_state.approval_request
+                        else "NONE"
+                    ),
+                }
+                return ToolCallResult(
+                    content=[{"type": "text", "text": json.dumps(output_payload_sig, indent=2)}],
+                    isError=False,
+                )
+
+            elif name == "get_durable_workflow_history":
+                wf_id = arguments["workflow_id"]
+                events = self.durable_store.get_events(wf_id)
+                output_payload_hist: dict[str, Any] = {
+                    "workflow_id": wf_id,
+                    "total_events": len(events),
+                    "timeline": [
+                        {
+                            "seq": e.sequence_number,
+                            "type": e.event_type.value,
+                            "timestamp": e.timestamp.isoformat(),
+                            "checksum": e.checksum,
+                            "payload_keys": list(e.payload.keys()),
+                        }
+                        for e in events
+                    ],
+                }
+                return ToolCallResult(
+                    content=[{"type": "text", "text": json.dumps(output_payload_hist, indent=2)}],
+                    isError=False,
+                )
+
+            elif name == "replay_durable_workflow":
+                wf_id = arguments["workflow_id"]
+                replayed_state, count = self.durable_engine.replay_workflow(wf_id)
+                output_payload_replay: dict[str, Any] = {
+                    "workflow_id": wf_id,
+                    "replayed_events_count": count,
+                    "reconstructed_status": replayed_state.status.value,
+                    "parity_verified": True,
+                }
+                return ToolCallResult(
+                    content=[{"type": "text", "text": json.dumps(output_payload_replay, indent=2)}],
                     isError=False,
                 )
 

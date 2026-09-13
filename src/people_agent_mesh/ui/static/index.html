@@ -34,6 +34,7 @@
     <button class="tab-btn" data-tab="tab-security">🛡️ Adversarial Defense & Red-Teaming</button>
     <button class="tab-btn" data-tab="tab-mcp">🔌 Model Context Protocol (MCP)</button>
     <button class="tab-btn" data-tab="tab-committee">🏛️ Calibration Committee (ADR-006)</button>
+    <button class="tab-btn" data-tab="tab-durable">⚡ Durable Execution (ADR-007)</button>
     <button class="tab-btn" data-tab="tab-evals">📊 CI Golden Benchmark Evals</button>
     <button class="tab-btn" data-tab="tab-docs">📚 Architecture & ADRs</button>
   </nav>
@@ -534,6 +535,102 @@
       </div>
     </section>
 
+    <!-- Tab: Durable Execution & Event Sourcing (ADR-007) -->
+    <section id="tab-durable" class="tab-content">
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-header">
+          <div class="card-title">⚡ Durable Execution Engine & Crash Recovery (ADR-007)</div>
+          <span class="badge badge-purple">Event Sourcing & Backward Saga Rollbacks</span>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1rem;">
+          In high-stakes enterprise People Operations, human calibration approvals take hours or days.
+          This durable engine persists an append-only, tamper-evident event stream to <strong>SQLite Write-Ahead Logging (WAL)</strong>.
+          Simulate a sudden container kill/pod eviction, recover state instantly with <strong>0.0% data loss</strong> without re-running LLM inferences,
+          and observe automated backward <strong>Saga compensation rollbacks</strong> on rejection.
+        </p>
+
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: flex-end;">
+          <div>
+            <label style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Candidate Calibration Scenario:</label>
+            <select id="dur-candidate-select" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.4rem 0.8rem; border-radius: 4px;">
+              <option value="elena">Elena Rostova (IC4 → IC5, US FLSA, Exceeds, +10.0% merit → High-Risk HITL)</option>
+              <option value="gabriel">Gabriel Santos (IC4 → IC5, Brazil CLT Art. 468, Exceeds, +12.0% merit)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="btn-start-durable">🚀 Start Durable Workflow</button>
+        </div>
+      </div>
+
+      <!-- Live Workflow Operations Panel -->
+      <div id="durable-ops-panel" style="display: none; margin-bottom: 1.5rem;">
+        <div class="grid-2">
+          <!-- Status & Resilience Card -->
+          <div class="card" style="border-left: 4px solid var(--accent-cyan);">
+            <div class="card-header">
+              <div class="card-title">🛡️ Execution Status & Checkpoint</div>
+              <span id="dur-status-badge" class="badge badge-amber">AWAITING HUMAN APPROVAL</span>
+            </div>
+            <div style="font-size: 0.85rem; line-height: 1.6; color: var(--text-primary);">
+              <div><strong>Workflow ID:</strong> <span id="dur-wf-id" style="font-family: monospace; color: var(--accent-cyan);">wf-dur-xxxx</span></div>
+              <div><strong>Persistence Engine:</strong> <span style="color: var(--accent-green);">SQLite WAL (Append-Only Event Store)</span></div>
+              <div><strong>Events Committed:</strong> <span id="dur-event-count" style="font-weight: bold;">0</span></div>
+              <div><strong>Data Loss Tolerance:</strong> <span id="dur-loss-stat" style="color: var(--accent-green); font-weight: bold;">0.0% (Zero Divergence)</span></div>
+              <div id="dur-hitl-note" style="margin-top: 0.5rem; color: var(--accent-amber); font-size: 0.8rem;"></div>
+            </div>
+
+            <!-- Interactive Action Controls -->
+            <div style="margin-top: 1rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+              <button class="btn btn-sm" id="btn-crash-durable" style="background: #ef4444; color: #fff;">💥 Simulate Worker Crash</button>
+              <button class="btn btn-sm" id="btn-recover-durable" style="background: #10b981; color: #fff; display: none;">🔄 Recover from SQLite WAL</button>
+              <button class="btn btn-sm btn-primary" id="btn-approve-durable">✅ Human Sign-Off (Approve)</button>
+              <button class="btn btn-sm" id="btn-reject-durable" style="background: #b91c1c; color: #fff;">❌ Reject (Trigger Saga)</button>
+              <button class="btn btn-sm" id="btn-replay-durable" style="background: #6366f1; color: #fff;">🎯 Replay Full Stream</button>
+            </div>
+          </div>
+
+          <!-- Saga Compensation Monitor Card -->
+          <div class="card" style="border-left: 4px solid var(--accent-purple);">
+            <div class="card-header">
+              <div class="card-title">🔄 Backward Saga Compensation Monitor</div>
+              <span id="dur-saga-badge" class="badge badge-purple">Forward Active</span>
+            </div>
+            <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.5rem;">
+              Tracks provisional resource holds registered during forward execution. If rejected, compensating handlers execute in reverse order (LIFO).
+            </p>
+            <div id="dur-saga-list" style="font-size: 0.8rem; line-height: 1.6; font-family: monospace;">
+              <div style="color: var(--text-secondary);">No active holds.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Append-Only Event Stream Timeline -->
+      <div id="durable-timeline-panel" class="card" style="display: none; margin-bottom: 1.5rem;">
+        <div class="card-header">
+          <div class="card-title">📜 Append-Only Write-Ahead Log (WAL Timeline)</div>
+          <span class="badge badge-green">SHA-256 Checksum Verified</span>
+        </div>
+        <p style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.75rem;">
+          Strict monotonic sequence numbers guarantee deterministic replay. Even after pod kills, the engine replays from sequence #1 without making external API calls.
+        </p>
+        <div style="overflow-x: auto;">
+          <table style="width: 100%; font-size: 0.8rem; border-collapse: collapse; text-align: left;">
+            <thead>
+              <tr style="border-bottom: 1px solid var(--border-color); color: var(--text-secondary);">
+                <th style="padding: 0.4rem 0.6rem;">Seq</th>
+                <th style="padding: 0.4rem 0.6rem;">Event Type</th>
+                <th style="padding: 0.4rem 0.6rem;">Timestamp</th>
+                <th style="padding: 0.4rem 0.6rem;">Checksum</th>
+                <th style="padding: 0.4rem 0.6rem;">Payload Highlights</th>
+              </tr>
+            </thead>
+            <tbody id="dur-events-tbody">
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
     <!-- Tab 4: Architecture & ADRs -->
     <section id="tab-docs" class="tab-content">
       <div class="grid-2">
@@ -559,6 +656,9 @@
 
             <p><strong><a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/ADR-006-multi-agent-calibration-debate.md" target="_blank" style="color: var(--accent-cyan);">ADR-006: Multi-Agent Calibration Committee Deliberation & Reflexion Loops</a></strong></p>
             <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Dialectic debate swarms (Advocate, Skeptic, Equity Auditor, Moderator) with verbal reinforcement and OKR self-correction.</p>
+
+            <p><strong><a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/ADR-007-durable-execution-and-saga-recovery.md" target="_blank" style="color: var(--accent-cyan);">ADR-007: Durable Execution Engine, Event Sourcing & Backward Saga Rollbacks</a></strong></p>
+            <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Append-only event streams, SQLite WAL persistence, zero-loss crash recovery without LLM re-execution, backward saga compensations, and Temporal / Trigger.dev adapters.</p>
           </div>
         </div>
 

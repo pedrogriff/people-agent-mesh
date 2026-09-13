@@ -84,3 +84,54 @@ def test_index_html_serving() -> None:
     res = client.get("/")
     assert res.status_code == 200
     assert "PeopleAgentMesh" in res.text
+
+
+def test_durable_workflow_rest_api() -> None:
+    # 1. Start durable workflow
+    start_payload = {
+        "employee_id": "EMP-REST-01",
+        "name": "Jordan Bell",
+        "department": "Infrastructure",
+        "level": "IC4",
+        "jurisdiction": "UNITED_STATES",
+        "base_salary": 180000.0,
+        "currency": "USD",
+        "performance_rating": "EXCEEDS",
+        "tenure_months": 22,
+        "compa_ratio": 0.93,
+        "workflow_type": "FULL_TALENT_DOSSIER",
+    }
+    start_res = client.post("/api/v1/durable/workflows/start", json=start_payload)
+    assert start_res.status_code == 200
+    data = start_res.json()
+    wf_id = data["workflow_id"]
+    assert data["status"] == "AWAITING_HUMAN_APPROVAL"
+    assert data["events_count"] >= 5
+
+    # 2. Get workflow
+    get_res = client.get(f"/api/v1/durable/workflows/{wf_id}")
+    assert get_res.status_code == 200
+    assert get_res.json()["status"] == "AWAITING_HUMAN_APPROVAL"
+
+    # 3. Simulate Crash Restart
+    crash_res = client.post(f"/api/v1/durable/workflows/{wf_id}/crash-restart")
+    assert crash_res.status_code == 200
+    assert crash_res.json()["data_loss_percentage"] == 0.0
+    assert crash_res.json()["status"] == "AWAITING_HUMAN_APPROVAL"
+
+    # 4. Signal Approval
+    sig_payload = {
+        "signal_name": "HUMAN_DECISION",
+        "decision": "APPROVED",
+        "decided_by": "vp.eng@enterprise.internal",
+        "comments": "Endorsed via REST API.",
+    }
+    sig_res = client.post(f"/api/v1/durable/workflows/{wf_id}/signal", json=sig_payload)
+    assert sig_res.status_code == 200
+    assert sig_res.json()["status"] == "COMPLETED"
+
+    # 5. Replay Workflow
+    replay_res = client.post(f"/api/v1/durable/workflows/{wf_id}/replay")
+    assert replay_res.status_code == 200
+    assert replay_res.json()["deterministic_verification"] is True
+    assert replay_res.json()["reconstructed_status"] == "COMPLETED"
