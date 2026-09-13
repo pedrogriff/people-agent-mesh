@@ -42,6 +42,7 @@ class WorkflowType(StrEnum):
     COMPENSATION_REVIEW = "COMPENSATION_REVIEW"
     PROMOTION_CALIBRATION = "PROMOTION_CALIBRATION"
     FULL_TALENT_DOSSIER = "FULL_TALENT_DOSSIER"
+    ANNUAL_CALIBRATION_COMMITTEE = "ANNUAL_CALIBRATION_COMMITTEE"
 
 
 class PerformanceRating(StrEnum):
@@ -103,6 +104,56 @@ class ApprovalRequest(BaseModel):
     decision_comments: str | None = None
 
 
+class DebateRole(StrEnum):
+    ADVOCATE = "ADVOCATE"
+    SKEPTIC = "SKEPTIC"
+    EQUITY_AUDITOR = "EQUITY_AUDITOR"
+    CONSENSUS_MODERATOR = "CONSENSUS_MODERATOR"
+
+
+class CommitteeVerdict(StrEnum):
+    PROMOTION_ENDORSED = "PROMOTION_ENDORSED"
+    PROMOTION_DEFERRED = "PROMOTION_DEFERRED"
+    CONDITIONAL_ENDORSEMENT = "CONDITIONAL_ENDORSEMENT"
+    COMPENSATION_ACCELERATION_ONLY = "COMPENSATION_ACCELERATION_ONLY"
+
+
+class DebateTurn(BaseModel):
+    speaker: DebateRole
+    round_number: int
+    statement: str
+    key_arguments: list[str] = Field(default_factory=list)
+    risks_or_objections: list[str] = Field(default_factory=list)
+    evidence_citations: list[str] = Field(default_factory=list)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
+class ReflexionCritique(BaseModel):
+    round_number: int
+    critique_score: float = Field(ge=0.0, le=1.0)
+    passed: bool
+    unaddressed_objections: list[str] = Field(default_factory=list)
+    coaching_specificity_issues: list[str] = Field(default_factory=list)
+    budget_or_equity_warnings: list[str] = Field(default_factory=list)
+    refinement_guidance: list[str] = Field(default_factory=list)
+    requires_revision: bool = False
+
+
+class CalibrationCommitteeDossier(BaseModel):
+    verdict: CommitteeVerdict
+    calibrated_level: str
+    calibrated_increase_pct: Decimal
+    executive_summary: str
+    points_of_consensus: list[str] = Field(default_factory=list)
+    points_of_friction: list[str] = Field(default_factory=list)
+    actionable_coaching_milestones: list[str] = Field(default_factory=list)
+    debate_transcript: list[DebateTurn] = Field(default_factory=list)
+    reflexion_critiques: list[ReflexionCritique] = Field(default_factory=list)
+    reflexion_iterations: int = 0
+    final_equity_clearance: bool = True
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+
 class AuditEntry(BaseModel):
     timestamp: datetime = Field(default_factory=lambda: datetime.now(UTC))
     actor: str
@@ -127,6 +178,9 @@ class MeshState(BaseModel):
     # Domain proposals
     comp_proposal: CompensationProposal | None = None
     promotion_proposal: PromotionProposal | None = None
+
+    # Multi-Agent Calibration Committee (ADR-006)
+    committee_dossier: CalibrationCommitteeDossier | None = None
 
     # Governance & Approval
     approval_request: ApprovalRequest | None = None

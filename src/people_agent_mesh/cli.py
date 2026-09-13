@@ -335,6 +335,112 @@ def run_demo() -> None:
     print("=================================================================")
 
 
+def run_committee_demo() -> None:
+    print("=================================================================")
+    print("  PEOPLE-AGENT-MESH: MULTI-AGENT CALIBRATION COMMITTEE (ADR-006)")
+    print("  Structured Multi-Agent Debate & Reflexion Self-Correction Loop")
+    print("=================================================================\n")
+
+    emp = EmployeeProfile(
+        employee_id="EMP-BR-8821",
+        name="Lucas Silva",
+        email="lucas.silva@enterprise.internal",
+        department="Core Infrastructure",
+        job_title="Senior Software Engineer",
+        level="IC4",
+        jurisdiction=Jurisdiction.BRAZIL,
+        manager_id="MGR-EXEC-01",
+        base_salary=Decimal("26500.00"),
+        currency="BRL",
+        compa_ratio=Decimal("0.96"),
+        performance_rating="EXCEEDS",
+        tenure_months=16,
+    )
+
+    state = MeshState(
+        workflow_id=f"wf-comm-{uuid.uuid4().hex[:8]}",
+        workflow_type=WorkflowType.ANNUAL_CALIBRATION_COMMITTEE,
+        jurisdiction=emp.jurisdiction,
+        employee=emp,
+        requester_id="MGR-EXEC-01",
+        requester_role="ENGINEERING_DIRECTOR",
+        retrieved_documents=[
+            {
+                "title": "Payment Modernization RFC",
+                "snippet": "Lucas single-handedly authored and delivered the cross-border ledger synchronization protocol, reducing p99 latency by 34% with zero downtime.",
+            },
+            {
+                "title": "Peer Review by Staff Architect",
+                "snippet": "Lucas operates with Staff IC5 autonomy on technical execution. Only remaining growth area is broader multi-team org sponsorship.",
+            },
+        ],
+    )
+
+    supervisor = MeshSupervisorAgent()
+    result = supervisor.execute(state)
+    dossier = result.state.committee_dossier
+    assert dossier is not None
+
+    print("-----------------------------------------------------------------")
+    print("  1. MULTI-AGENT DEBATE TRANSCRIPT (Structured Deliberation)")
+    print("-----------------------------------------------------------------")
+    role_icons = {
+        "ADVOCATE": "🟢 [SPONSOR ADVOCATE]",
+        "SKEPTIC": "🔴 [BAR-RAISER SKEPTIC]",
+        "EQUITY_AUDITOR": "🟡 [EQUITY & BUDGET AUDITOR]",
+        "CONSENSUS_MODERATOR": "🔵 [CONSENSUS MODERATOR]",
+    }
+
+    for turn in dossier.debate_transcript:
+        icon = role_icons.get(turn.speaker.value, f"[{turn.speaker.value}]")
+        print(f"\n{icon} Round {turn.round_number}:")
+        print(f'  "{turn.statement}"')
+        if turn.key_arguments:
+            print("  Arguments/Points:")
+            for arg in turn.key_arguments:
+                print(f"    • {arg}")
+        if turn.risks_or_objections:
+            print("  Risks / Challenges:")
+            for r in turn.risks_or_objections:
+                print(f"    ⚠️  {r}")
+
+    print("\n-----------------------------------------------------------------")
+    print("  2. REFLEXION & SELF-CORRECTION AUDIT (CMU Agentic Loop)")
+    print("-----------------------------------------------------------------")
+    for idx, critique in enumerate(dossier.reflexion_critiques, 1):
+        print(f"\n  Reflexion Pass #{idx}:")
+        print(f"    Critique Score:      {critique.critique_score * 100:.1f}% / 100.0%")
+        print(f"    Passed Gate:         {'✅ YES' if critique.passed else '⚠️  REVISION REQUIRED'}")
+        if critique.unaddressed_objections:
+            print("    Unaddressed Points:  " + " | ".join(critique.unaddressed_objections))
+        if critique.coaching_specificity_issues:
+            print("    Coaching Specificity: " + " | ".join(critique.coaching_specificity_issues))
+        if critique.refinement_guidance:
+            print("    Guidance Applied:    " + " | ".join(critique.refinement_guidance))
+
+    print("\n-----------------------------------------------------------------")
+    print("  3. FINAL CALIBRATED COMMITTEE DOSSIER (Executive Outcome)")
+    print("-----------------------------------------------------------------")
+    print(f"  Verdict:                    {dossier.verdict.value}")
+    print(f"  Calibrated Level:           {dossier.calibrated_level}")
+    print(f"  Calibrated Merit Increase:  {dossier.calibrated_increase_pct * 100:.1f}%")
+    print(f"  Reflexion Cycles:           {dossier.reflexion_iterations} self-correction passes")
+    print(
+        f"  Statutory Labor Compliance: {'✅ VERIFIED (CLT Art. 468)' if result.state.compliance_passed else '❌ VIOLATIONS'}"
+    )
+    print(
+        f"  HITL Approval Gate Status:  {'🟡 Awaiting VP Sign-Off' if result.state.status == WorkflowStatus.AWAITING_HUMAN_APPROVAL else '🟢 Auto-Approved'}"
+    )
+    print(f'\n  Executive Consensus Summary:\n  "{dossier.executive_summary}"\n')
+    print("  Actionable Growth Coaching Milestones (Q1-Q2 OKRs):")
+    for m in dossier.actionable_coaching_milestones:
+        print(f"    🎯 {m}")
+
+    print("\n=================================================================")
+    print("  CALIBRATION COMMITTEE COMPLETE: Enterprise Governance Approved! 🏛️")
+    print("=================================================================\n")
+
+
 def run_ui(host: str = "127.0.0.1", port: int = 8000) -> None:
     import uvicorn
 
@@ -357,6 +463,11 @@ def main() -> None:
         "--evals-synthetic",
         action="store_true",
         help="Execute synthetic edge-case generation and demographic counterfactual parity audits",
+    )
+    parser.add_argument(
+        "--committee",
+        action="store_true",
+        help="Execute Multi-Agent Calibration Committee debate with Reflexion self-correction (ADR-006)",
     )
     parser.add_argument(
         "--demo", action="store_true", help="Run end-to-end talent calibration showcase"
@@ -386,6 +497,8 @@ def main() -> None:
         run_stdio_server()
     elif args.mcp_sse or args.ui:
         run_ui(host=args.host, port=args.port)
+    elif args.committee:
+        run_committee_demo()
     elif args.evals:
         run_evals()
     elif args.evals_judge:

@@ -272,6 +272,87 @@ def run_evals_endpoint() -> dict[str, Any]:
     return res.model_dump(mode="json")
 
 
+class CommitteeDeliberationRequest(BaseModel):
+    employee_id: str = "EMP-CALIB-01"
+    name: str = "Senior Staff Candidate"
+    department: str = "Core Engineering"
+    level: str = "IC4"
+    target_level: str = "IC5"
+    jurisdiction: str = "UNITED_STATES"
+    base_salary: float = 175000.0
+    currency: str = "USD"
+    performance_rating: str = "EXCEEDS"
+    tenure_months: int = 16
+    compa_ratio: float = 0.95
+
+
+@app.post("/api/v1/committee/deliberate")
+def deliberate_committee_endpoint(req: CommitteeDeliberationRequest) -> dict[str, Any]:
+    jur = (
+        Jurisdiction.BRAZIL
+        if "BRAZIL" in req.jurisdiction.upper()
+        else (
+            Jurisdiction.CANADA
+            if "CANADA" in req.jurisdiction.upper()
+            else Jurisdiction.UNITED_STATES
+        )
+    )
+
+    emp = EmployeeProfile(
+        employee_id=req.employee_id,
+        name=req.name,
+        email="candidate@enterprise.internal",
+        department=req.department,
+        job_title="Software Engineer",
+        level=req.level,
+        jurisdiction=jur,
+        manager_id="MGR-001",
+        base_salary=Decimal(str(req.base_salary)),
+        currency=req.currency,
+        compa_ratio=Decimal(str(req.compa_ratio)),
+        performance_rating=req.performance_rating,
+        tenure_months=req.tenure_months,
+    )
+
+    wf_id = f"wf-comm-{uuid.uuid4().hex[:8]}"
+    state = MeshState(
+        workflow_id=wf_id,
+        workflow_type=WorkflowType.ANNUAL_CALIBRATION_COMMITTEE,
+        jurisdiction=jur,
+        employee=emp,
+        requester_id="REQ-UI",
+        requester_role="PEOPLE_PARTNER",
+    )
+
+    result = supervisor.execute(state)
+    active_workflows[wf_id] = result.state
+
+    dossier = result.state.committee_dossier
+    return {
+        "workflow_id": wf_id,
+        "status": result.state.status.value,
+        "verdict": dossier.verdict.value if dossier else "PENDING",
+        "calibrated_level": dossier.calibrated_level if dossier else emp.level,
+        "calibrated_increase_pct": (
+            float(dossier.calibrated_increase_pct * 100) if dossier else 0.0
+        ),
+        "executive_summary": dossier.executive_summary if dossier else "",
+        "points_of_consensus": dossier.points_of_consensus if dossier else [],
+        "points_of_friction": dossier.points_of_friction if dossier else [],
+        "actionable_coaching_milestones": (
+            dossier.actionable_coaching_milestones if dossier else []
+        ),
+        "reflexion_iterations": dossier.reflexion_iterations if dossier else 0,
+        "reflexion_critiques": (
+            [c.model_dump(mode="json") for c in dossier.reflexion_critiques] if dossier else []
+        ),
+        "debate_transcript": (
+            [t.model_dump(mode="json") for t in dossier.debate_transcript] if dossier else []
+        ),
+        "approval_required": result.state.status == WorkflowStatus.AWAITING_HUMAN_APPROVAL,
+    }
+
+
 # Static Assets and UI Mount
 static_dir = os.path.join(os.path.dirname(__file__), "ui", "static")
 if os.path.exists(static_dir):

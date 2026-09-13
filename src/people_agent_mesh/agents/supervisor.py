@@ -12,11 +12,13 @@ from datetime import UTC, datetime
 from decimal import Decimal
 
 from people_agent_mesh.agents.base import AgentResult, BaseAgent
+from people_agent_mesh.agents.committee import CalibrationCommitteeOrchestrator
 from people_agent_mesh.agents.compensation import CompensationAgent
 from people_agent_mesh.agents.promotion import PromotionAgent
 from people_agent_mesh.core.state import (
     ApprovalRequest,
     ApprovalStatus,
+    CommitteeVerdict,
     MeshState,
     WorkflowStatus,
     WorkflowType,
@@ -35,6 +37,7 @@ class MeshSupervisorAgent(BaseAgent):
         self,
         comp_agent: CompensationAgent | None = None,
         promo_agent: PromotionAgent | None = None,
+        committee_orchestrator: CalibrationCommitteeOrchestrator | None = None,
         privacy_gateway: ZeroRetentionPrivacyGateway | None = None,
         abac_engine: ABACSecurityEngine | None = None,
         slack_tool: SlackApprovalTool | None = None,
@@ -44,6 +47,7 @@ class MeshSupervisorAgent(BaseAgent):
         super().__init__(name="MeshSupervisorAgent")
         self.comp_agent = comp_agent or CompensationAgent()
         self.promo_agent = promo_agent or PromotionAgent()
+        self.committee_orchestrator = committee_orchestrator or CalibrationCommitteeOrchestrator()
         self.privacy_gateway = privacy_gateway or ZeroRetentionPrivacyGateway()
         self.abac_engine = abac_engine
         self.slack_tool = slack_tool or SlackApprovalTool()
@@ -101,6 +105,25 @@ class MeshSupervisorAgent(BaseAgent):
                 reasons.append("Promotion readiness score below 0.80 confidence threshold")
                 required_role = "VP_ENGINEERING"
 
+        if state.committee_dossier:
+            if state.committee_dossier.verdict == CommitteeVerdict.CONDITIONAL_ENDORSEMENT:
+                risk_score += 0.35
+                reasons.append(
+                    f"Calibration Committee issued CONDITIONAL_ENDORSEMENT for {state.committee_dossier.calibrated_level} with quarterly OKR milestones"
+                )
+                required_role = "VP_ENGINEERING"
+            elif state.committee_dossier.verdict == CommitteeVerdict.PROMOTION_DEFERRED:
+                risk_score += 0.40
+                reasons.append(
+                    "Calibration Committee recommended DEFERRED promotion with growth coaching plan"
+                )
+                required_role = "PEOPLE_PARTNER"
+            elif state.committee_dossier.verdict == CommitteeVerdict.COMPENSATION_ACCELERATION_ONLY:
+                risk_score += 0.20
+                reasons.append(
+                    "Calibration Committee recommended compensation acceleration only without level change"
+                )
+
         if state.compliance_violations:
             risk_score = 1.0
             reasons.append(f"Compliance violations: {', '.join(state.compliance_violations)}")
@@ -144,6 +167,18 @@ class MeshSupervisorAgent(BaseAgent):
             parts.append(
                 f"Business Impact Summary: {state.promotion_proposal.business_impact_summary}"
             )
+
+        if state.committee_dossier:
+            cd = state.committee_dossier
+            parts.append(
+                f"Calibration Committee Deliberation (ADR-006): Verdict '{cd.verdict.value}' at calibrated level {cd.calibrated_level} "
+                f"(+{(cd.calibrated_increase_pct * 100):.1f}% merit acceleration across {cd.reflexion_iterations} reflexion self-correction cycles)."
+            )
+            parts.append(f"Committee Executive Summary: {cd.executive_summary}")
+            if cd.actionable_coaching_milestones:
+                parts.append(
+                    "Key Coaching Milestones: " + " | ".join(cd.actionable_coaching_milestones)
+                )
 
         comp_status = (
             "PASSED"
@@ -231,6 +266,7 @@ class MeshSupervisorAgent(BaseAgent):
         if state.workflow_type in {
             WorkflowType.COMPENSATION_REVIEW,
             WorkflowType.FULL_TALENT_DOSSIER,
+            WorkflowType.ANNUAL_CALIBRATION_COMMITTEE,
         }:
             if current_state.comp_proposal is None:
                 comp_res = self.comp_agent.execute(current_state)
@@ -239,6 +275,7 @@ class MeshSupervisorAgent(BaseAgent):
         if state.workflow_type in {
             WorkflowType.PROMOTION_CALIBRATION,
             WorkflowType.FULL_TALENT_DOSSIER,
+            WorkflowType.ANNUAL_CALIBRATION_COMMITTEE,
         }:
             if current_state.promotion_proposal is None:
                 promo_res = self.promo_agent.execute(current_state)
@@ -259,6 +296,12 @@ class MeshSupervisorAgent(BaseAgent):
             action="VERIFY_COMPLIANCE",
             details={"passed": comp_report.passed, "violations": comp_report.violations},
         )
+
+        # 3.5 Multi-Agent Calibration Committee Deliberation & Reflexion Loop (ADR-006)
+        if state.workflow_type == WorkflowType.ANNUAL_CALIBRATION_COMMITTEE:
+            if current_state.committee_dossier is None:
+                comm_res = self.committee_orchestrator.execute(current_state)
+                current_state = comm_res.state
 
         # 4. Composite Risk Evaluation & HITL Gating
         risk_score, triggered_reason, required_role = self._assess_risk(current_state)
@@ -324,6 +367,10 @@ class MeshSupervisorAgent(BaseAgent):
             texts_to_verify.append(current_state.comp_proposal.rationale)
         if current_state.promotion_proposal:
             texts_to_verify.append(current_state.promotion_proposal.business_impact_summary)
+        if current_state.committee_dossier:
+            texts_to_verify.append(current_state.committee_dossier.executive_summary)
+            for m in current_state.committee_dossier.actionable_coaching_milestones:
+                texts_to_verify.append(m)
 
         for out_text in texts_to_verify:
             if out_text:

@@ -31,7 +31,9 @@
   <nav class="tab-nav">
     <button class="tab-btn active" data-tab="tab-orchestrator">🤖 Multi-Agent Orchestrator & HITL</button>
     <button class="tab-btn" data-tab="tab-privacy">🔒 Zero-Retention Privacy Gateway</button>
+    <button class="tab-btn" data-tab="tab-security">🛡️ Adversarial Defense & Red-Teaming</button>
     <button class="tab-btn" data-tab="tab-mcp">🔌 Model Context Protocol (MCP)</button>
+    <button class="tab-btn" data-tab="tab-committee">🏛️ Calibration Committee (ADR-006)</button>
     <button class="tab-btn" data-tab="tab-evals">📊 CI Golden Benchmark Evals</button>
     <button class="tab-btn" data-tab="tab-docs">📚 Architecture & ADRs</button>
   </nav>
@@ -241,6 +243,92 @@
       </div>
     </section>
 
+    <!-- Tab: Adversarial Defense & Red-Teaming (ADR-003) -->
+    <section id="tab-security" class="tab-content">
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-header">
+          <div class="card-title">🛡️ Adversarial Defense & Prompt Injection Playground (ADR-003)</div>
+          <span class="badge badge-amber">Heuristic Scoring • Delimiter Sandboxing • Canary Tripwires</span>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.9rem; margin-bottom: 1rem;">
+          Simulate Tier 3 red-teaming attacks against the agent mesh perimeter. Freeform untrusted inputs (e.g. manager calibration justifications, free-text override requests) are inspected for prompt injections, system delimiter tampering, and canary token exfiltration before entering agent context.
+        </p>
+
+        <div class="grid-2">
+          <!-- Left: Attack Presets and Payload Input -->
+          <div>
+            <div class="form-group">
+              <label>Select Attack Preset / Test Vector:</label>
+              <select id="security-select-preset" class="form-control" style="width: 100%; padding: 0.5rem; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 6px;">
+                <option value="adv_001_jailbreak">🚨 [ADV-001] Role-Playing Jailbreak (DAN / System Override)</option>
+                <option value="adv_002_delimiter">⚠️ [ADV-002] Delimiter Sandboxing Escape (&lt;/untrusted_people_notes&gt;)</option>
+                <option value="adv_003_hitl_bypass">🛑 [ADV-003] Human-in-the-Loop Approval Bypass Attempt</option>
+                <option value="adv_004_canary">🕵️ [ADV-004] Cryptographic Canary Token Exfiltration Probe</option>
+                <option value="adv_005_clt_override">⚖️ [ADV-005] Statutory Compliance Policy Tampering (CLT Art. 468)</option>
+                <option value="adv_006_vault_dump">🔓 [ADV-006] Token Vault Exfiltration & Direct Data Dump</option>
+                <option value="benign_note">✅ [BENIGN] Clean Calibration Note (Legitimate IC5 Justification)</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Untrusted Ingress Text (Manager Note / Freeform Justification):</label>
+              <textarea id="security-input-text" class="form-control" rows="8" style="width: 100%; font-family: monospace; font-size: 0.82rem; background: var(--bg-secondary); color: var(--text-primary); border: 1px solid var(--border-color); border-radius: 6px; padding: 0.5rem;"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 0.75rem;">
+              <button id="btn-scan-security" class="btn-primary">🛡️ Scan Threat Boundary & Guardrails</button>
+            </div>
+          </div>
+
+          <!-- Right: Security Telemetry & Inspection Details -->
+          <div>
+            <!-- Metric Badges -->
+            <div class="metric-row" style="margin-bottom: 1rem;">
+              <div class="metric-pill">
+                <div class="metric-val" id="sec-threat-score">0.00</div>
+                <div class="metric-lbl">Threat Score</div>
+              </div>
+              <div class="metric-pill">
+                <div class="metric-val" id="sec-verdict" style="color: var(--accent-green);">GREEN</div>
+                <div class="metric-lbl">Security Verdict</div>
+              </div>
+              <div class="metric-pill">
+                <div class="metric-val" id="sec-canary" style="color: var(--accent-green);">INTACT</div>
+                <div class="metric-lbl">Canary Tripwire</div>
+              </div>
+              <div class="metric-pill">
+                <div class="metric-val" id="sec-action" style="color: var(--accent-cyan);">CLEAN</div>
+                <div class="metric-lbl">Perimeter Action</div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
+                Detected Threat Signatures:
+              </label>
+              <div id="sec-detected-badges" style="display: flex; gap: 0.4rem; flex-wrap: wrap; min-height: 28px; margin-bottom: 0.75rem;">
+                <span class="badge badge-green">None (Clean Input)</span>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
+                Escaped Delimiter Sandbox Envelope:
+              </label>
+              <pre class="code-box" id="sec-sandboxed-box" style="max-height: 120px; overflow-y: auto; font-size: 0.78rem;">// Delimiter sandboxing output will appear here...</pre>
+            </div>
+
+            <div class="form-group">
+              <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-secondary); margin-bottom: 0.35rem; display: block;">
+                Security Assessment Audit Record (JSON):
+              </label>
+              <pre class="code-box" id="sec-audit-log" style="max-height: 120px; overflow-y: auto; font-size: 0.78rem;">// Security assessment snapshot...</pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- Tab 3: Model Context Protocol (MCP) Server -->
     <section id="tab-mcp" class="tab-content">
       <div class="card" style="margin-bottom: 1.5rem;">
@@ -312,18 +400,30 @@
           <button id="btn-run-evals" class="btn-primary" style="width: auto;">▶️ Execute CI Golden Benchmarks</button>
         </div>
 
-        <div class="metric-row">
+        <div class="metric-row" style="margin-bottom: 1.25rem;">
           <div class="metric-pill">
             <div class="metric-val" id="eval-acc">100.0%</div>
-            <div class="metric-lbl">Accuracy Rate</div>
+            <div class="metric-lbl">Accuracy Rate (18/18)</div>
           </div>
           <div class="metric-pill">
             <div class="metric-val" id="eval-comp">100.0%</div>
             <div class="metric-lbl">Labor Compliance</div>
           </div>
           <div class="metric-pill">
-            <div class="metric-val" id="eval-hitl">100.0%</div>
-            <div class="metric-lbl">HITL Routing Precision</div>
+            <div class="metric-val" id="eval-adv">100.0%</div>
+            <div class="metric-lbl">Adversarial Defense</div>
+          </div>
+          <div class="metric-pill">
+            <div class="metric-val" id="eval-faith">96.2%</div>
+            <div class="metric-lbl">Faithfulness Rubric</div>
+          </div>
+          <div class="metric-pill">
+            <div class="metric-val" id="eval-tone">100.0%</div>
+            <div class="metric-lbl">Constructive Tone</div>
+          </div>
+          <div class="metric-pill">
+            <div class="metric-val" id="eval-parity">100.0%</div>
+            <div class="metric-lbl">Demographic Parity</div>
           </div>
           <div class="metric-pill">
             <div class="metric-val" id="eval-gate" style="color: var(--accent-green);">🟢 PASS</div>
@@ -332,6 +432,105 @@
         </div>
 
         <pre class="code-box" id="eval-output">// Click 'Execute CI Golden Benchmarks' to evaluate edge cases across Brazil, US, and Canada...</pre>
+      </div>
+    </section>
+
+    <!-- Tab: Calibration Committee & Reflexion (ADR-006) -->
+    <section id="tab-committee" class="tab-content">
+      <div class="card" style="margin-bottom: 1.5rem;">
+        <div class="card-header">
+          <div class="card-title">🏛️ Multi-Agent Calibration Committee Deliberation (ADR-006)</div>
+          <span class="badge badge-purple">Dialectic Debate & Reflexion Self-Correction</span>
+        </div>
+        <p style="color: var(--text-secondary); font-size: 0.85rem; line-height: 1.5; margin-bottom: 1rem;">
+          In high-stakes enterprise engineering calibration, promotions and merit exceptions are reviewed by cross-functional panels.
+          This panel convenes an <strong>Advocate (Sponsor)</strong>, a <strong>Skeptic (Bar-Raiser)</strong>, and an <strong>Equity & Budget Auditor</strong>,
+          moderated by a <strong>Consensus Moderator</strong> with a formal <strong>CMU Reflexion loop</strong> that catches vague coaching and self-corrects into measurable quarterly OKRs.
+        </p>
+
+        <div style="display: flex; gap: 1rem; flex-wrap: wrap; margin-bottom: 1rem; align-items: flex-end;">
+          <div>
+            <label style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 0.25rem;">Select Calibration Candidate:</label>
+            <select id="comm-candidate-select" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-color); padding: 0.4rem 0.8rem; border-radius: 4px;">
+              <option value="lucas">Lucas Silva (IC4 → IC5, Brazil CLT, 16mo Tenure, EXCEEDS)</option>
+              <option value="devin">Devin Wright (IC4 → IC5, US FLSA, 26mo Tenure, EXCEEDS)</option>
+              <option value="mariana">Mariana Souza (IC5 → IC6, Canada PIPEDA, 14mo Tenure, MEETS_HIGH)</option>
+            </select>
+          </div>
+          <button class="btn btn-primary" id="btn-run-committee">🏛️ Convene Calibration Committee</button>
+        </div>
+      </div>
+
+      <!-- Committee Results Layout -->
+      <div id="committee-results" style="display: none;">
+        <!-- 4 Role Cards Grid -->
+        <div class="grid-2" style="margin-bottom: 1.5rem;">
+          <div class="card" style="border-left: 4px solid #10b981;">
+            <div class="card-header">
+              <div class="card-title" style="color: #10b981;">🟢 Sponsor Advocate</div>
+              <span class="badge badge-green">Champions Velocity</span>
+            </div>
+            <p id="comm-advocate-text" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-primary);"></p>
+            <div id="comm-advocate-args" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;"></div>
+          </div>
+
+          <div class="card" style="border-left: 4px solid #ef4444;">
+            <div class="card-header">
+              <div class="card-title" style="color: #ef4444;">🔴 Bar-Raiser Skeptic</div>
+              <span class="badge badge-amber" style="background: rgba(239, 68, 68, 0.2); color: #ef4444; border-color: rgba(239, 68, 68, 0.4);">Probes Tenure & Scope</span>
+            </div>
+            <p id="comm-skeptic-text" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-primary);"></p>
+            <div id="comm-skeptic-risks" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;"></div>
+          </div>
+
+          <div class="card" style="border-left: 4px solid #f59e0b;">
+            <div class="card-header">
+              <div class="card-title" style="color: #f59e0b;">🟡 Equity & Budget Auditor</div>
+              <span class="badge badge-amber">Compliance & Budget</span>
+            </div>
+            <p id="comm-equity-text" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-primary);"></p>
+            <div id="comm-equity-audit" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;"></div>
+          </div>
+
+          <div class="card" style="border-left: 4px solid #3b82f6;">
+            <div class="card-header">
+              <div class="card-title" style="color: #3b82f6;">🔵 Consensus Moderator</div>
+              <span id="comm-verdict-badge" class="badge badge-blue">Calibrated Verdict</span>
+            </div>
+            <p id="comm-moderator-text" style="font-size: 0.85rem; line-height: 1.5; color: var(--text-primary);"></p>
+            <div id="comm-moderator-metrics" style="font-size: 0.8rem; color: var(--text-secondary); margin-top: 0.5rem;"></div>
+          </div>
+        </div>
+
+        <!-- Reflexion & Self-Correction Audit Banner -->
+        <div class="card" style="margin-bottom: 1.5rem; background: rgba(139, 92, 246, 0.05); border: 1px solid rgba(139, 92, 246, 0.3);">
+          <div class="card-header">
+            <div class="card-title" style="color: #8b5cf6;">🔄 Reflexion Self-Correction Audit (CMU Agentic Loop)</div>
+            <span id="comm-reflexion-badge" class="badge badge-purple">1 Cycle Completed</span>
+          </div>
+          <div class="grid-2" style="margin-top: 0.5rem;">
+            <div style="background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 4px; border-left: 3px solid #ef4444;">
+              <strong style="font-size: 0.85rem; color: #ef4444;">Pass #1 (Pre-Reflexion Critique):</strong>
+              <div id="comm-pass1-score" style="font-size: 0.8rem; margin: 0.25rem 0; font-family: monospace;">Score: 65.0% / 100.0% — REVISION REQUIRED</div>
+              <div id="comm-pass1-issues" style="font-size: 0.75rem; color: var(--text-secondary);"></div>
+            </div>
+            <div style="background: rgba(0,0,0,0.2); padding: 0.75rem; border-radius: 4px; border-left: 3px solid #10b981;">
+              <strong style="font-size: 0.85rem; color: #10b981;">Pass #2 (Post-Reflexion Refined):</strong>
+              <div id="comm-pass2-score" style="font-size: 0.8rem; margin: 0.25rem 0; font-family: monospace;">Score: 100.0% / 100.0% — PASSED GATE</div>
+              <div id="comm-pass2-summary" style="font-size: 0.75rem; color: var(--text-secondary);">Replaced vague language with time-bounded quarterly OKRs and mitigated tenure risk.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Calibrated OKRs & Actionable Milestones -->
+        <div class="card" style="margin-bottom: 1.5rem;">
+          <div class="card-header">
+            <div class="card-title">🎯 Actionable Growth Coaching Plan (Calibrated Q1-Q2 OKRs)</div>
+            <span class="badge badge-green">Time-Bounded & Measurable</span>
+          </div>
+          <ul id="comm-okr-list" style="font-size: 0.85rem; line-height: 1.8; color: var(--text-primary); margin-left: 1.2rem; margin-top: 0.5rem;">
+          </ul>
+        </div>
       </div>
     </section>
 
@@ -349,8 +548,17 @@
             <p><strong><a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/ADR-002-zero-retention-privacy-gateway.md" target="_blank" style="color: var(--accent-cyan);">ADR-002: Zero-Retention Privacy Gateway & PII Tokenization</a></strong></p>
             <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Perimeter ingress surrogate tokenization for Brazil LGPD, US FLSA, and Canadian PIPEDA with cryptographic shredding.</p>
 
+            <p><strong><a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/ADR-003-adversarial-prompt-injection-defense.md" target="_blank" style="color: var(--accent-cyan);">ADR-003: Adversarial Prompt Injection Defense & Canary Tripwires</a></strong></p>
+            <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Multi-vector heuristic threat scoring, XML delimiter sandboxing, Canary tripwire assertion gates, and CI regression blocking (Tier 3 evals).</p>
+
             <p><strong><a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/ADR-004-model-context-protocol-standard.md" target="_blank" style="color: var(--accent-cyan);">ADR-004: Standardizing on Model Context Protocol (MCP)</a></strong></p>
             <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Exposing deterministic People operations tools as standardized MCP JSON-RPC 2.0 endpoints over stdio and HTTP/SSE. See <a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/MCP-SERVER-GUIDE.md" target="_blank" style="color: var(--accent-cyan);">MCP Server Integration Guide</a>.</p>
+
+            <p><strong><a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/ADR-005-llm-as-a-judge-evals.md" target="_blank" style="color: var(--accent-cyan);">ADR-005: LLM-as-a-Judge Semantic Rubrics & Demographic Parity Auditing</a></strong></p>
+            <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Semantic evaluation framework for Faithfulness, Constructive Executive Tone, and Counterfactual Statistical Parity (&Delta; &le; 0.0001).</p>
+
+            <p><strong><a href="https://github.com/pedrogriff/people-agent-mesh/blob/main/docs/ADR-006-multi-agent-calibration-debate.md" target="_blank" style="color: var(--accent-cyan);">ADR-006: Multi-Agent Calibration Committee Deliberation & Reflexion Loops</a></strong></p>
+            <p style="color: var(--text-secondary); font-size: 0.8rem; margin-bottom: 1rem;">Dialectic debate swarms (Advocate, Skeptic, Equity Auditor, Moderator) with verbal reinforcement and OKR self-correction.</p>
           </div>
         </div>
 

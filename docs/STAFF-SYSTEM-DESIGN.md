@@ -276,6 +276,7 @@ This system demonstrates the core technical capabilities expected of a **Staff S
 | **Data Privacy & Statutory Compliance** | Zero-retention PII tokenizer, cryptographic vault shredding (LGPD Art. 18), and Brazil CLT Art. 468 verification. |
 | **Production Tool Contracts & Resiliency** | Pydantic v2 typed RPC contracts, sliding-window circuit breakers (`CircuitBreaker`), and fixed-point math engines. |
 | **AI Security & Adversarial Defense** | Heuristic threat scoring, XML delimiter sandboxing, and high-entropy canary token tripwires (`ADR-003`). |
+| **Multi-Agent Deliberation & Reflexion** | 4-Agent Calibration Committee debate swarm (Advocate, Skeptic, Equity Auditor, Moderator) with CMU Reflexion self-correction (`ADR-006`). |
 | **Continuous Quality Engineering** | 5-Tier CI evaluation suite (18 scenarios), LLM-as-a-Judge rubrics, and counterfactual demographic parity audits. |
 | **Industry Protocol Standardization** | Full Anthropic Model Context Protocol (MCP) server implementation over stdio and HTTP/SSE (`ADR-004`). |
 | **Production Telemetry & FinOps** | OpenTelemetry GenAI spans, token attribution, and cost modeling per organizational department. |

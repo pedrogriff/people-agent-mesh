@@ -7,6 +7,7 @@ and zero-retention PII tokenization as standardized MCP Tools, Resources, and Pr
 from __future__ import annotations
 
 import json
+import uuid
 from decimal import Decimal
 from typing import Any
 
@@ -293,6 +294,77 @@ class PeopleMeshMCPServer:
                         },
                     },
                     "required": ["text"],
+                },
+            ),
+            ToolDefinition(
+                name="run_calibration_committee",
+                description=(
+                    "Executes a Multi-Agent Talent Calibration Committee deliberation (ADR-006). "
+                    "Convenes Advocate, Skeptic (Bar Raiser), Equity Auditor, and Consensus Moderator agents "
+                    "with formal Reflexion self-correction to audit promotion proposals and generate consensus coaching OKRs."
+                ),
+                inputSchema={
+                    "type": "object",
+                    "properties": {
+                        "employee_id": {
+                            "type": "string",
+                            "description": "Unique employee identifier (e.g. 'EMP-101').",
+                            "default": "EMP-CALIB-01",
+                        },
+                        "name": {
+                            "type": "string",
+                            "description": "Employee name or token.",
+                            "default": "Senior Staff Candidate",
+                        },
+                        "department": {
+                            "type": "string",
+                            "description": "Department name.",
+                            "default": "Core Engineering",
+                        },
+                        "level": {
+                            "type": "string",
+                            "description": "Current engineering level (e.g. 'IC4', 'IC5').",
+                            "default": "IC4",
+                        },
+                        "target_level": {
+                            "type": "string",
+                            "description": "Proposed promotion target level (e.g. 'IC5').",
+                            "default": "IC5",
+                        },
+                        "jurisdiction": {
+                            "type": "string",
+                            "enum": ["BRAZIL", "UNITED_STATES", "CANADA"],
+                            "description": "Jurisdiction governing labor compliance.",
+                            "default": "UNITED_STATES",
+                        },
+                        "base_salary": {
+                            "type": "number",
+                            "description": "Current base salary amount.",
+                            "default": 175000.0,
+                        },
+                        "currency": {
+                            "type": "string",
+                            "description": "Currency code ('USD', 'BRL', 'CAD').",
+                            "default": "USD",
+                        },
+                        "performance_rating": {
+                            "type": "string",
+                            "enum": ["EXCEEDS", "MEETS_HIGH", "MEETS", "NEEDS_IMPROVEMENT"],
+                            "description": "Current performance rating.",
+                            "default": "EXCEEDS",
+                        },
+                        "tenure_months": {
+                            "type": "integer",
+                            "description": "Tenure in current level in months.",
+                            "default": 16,
+                        },
+                        "compa_ratio": {
+                            "type": "number",
+                            "description": "Current compa-ratio (e.g. 0.95).",
+                            "default": 0.95,
+                        },
+                    },
+                    "required": ["level", "performance_rating"],
                 },
             ),
         ]
@@ -756,6 +828,82 @@ class PeopleMeshMCPServer:
                 return ToolCallResult(
                     content=[{"type": "text", "text": json.dumps(canary_data, indent=2)}],
                     isError=len(leaks) > 0,
+                )
+
+            elif name == "run_calibration_committee":
+                from people_agent_mesh.agents.committee import CalibrationCommitteeOrchestrator
+                from people_agent_mesh.agents.promotion import PromotionAgent
+                from people_agent_mesh.core.state import MeshState, WorkflowType
+
+                jur_str = str(arguments.get("jurisdiction", "UNITED_STATES")).upper()
+                jur = (
+                    Jurisdiction.BRAZIL
+                    if "BRAZIL" in jur_str
+                    else (
+                        Jurisdiction.CANADA if "CANADA" in jur_str else Jurisdiction.UNITED_STATES
+                    )
+                )
+
+                emp = EmployeeProfile(
+                    employee_id=str(arguments.get("employee_id", "EMP-CALIB-01")),
+                    name=str(arguments.get("name", "Senior Staff Candidate")),
+                    email="candidate@enterprise.internal",
+                    department=str(arguments.get("department", "Core Engineering")),
+                    job_title="Software Engineer",
+                    level=str(arguments.get("level", "IC4")),
+                    jurisdiction=jur,
+                    manager_id="MGR-001",
+                    base_salary=Decimal(str(arguments.get("base_salary", 175000.0))),
+                    currency=str(
+                        arguments.get("currency", "USD" if jur != Jurisdiction.BRAZIL else "BRL")
+                    ),
+                    compa_ratio=Decimal(str(arguments.get("compa_ratio", 0.95))),
+                    performance_rating=str(arguments.get("performance_rating", "EXCEEDS")),
+                    tenure_months=int(arguments.get("tenure_months", 16)),
+                )
+
+                state = MeshState(
+                    workflow_id=f"wf-mcp-committee-{uuid.uuid4().hex[:8]}",
+                    workflow_type=WorkflowType.ANNUAL_CALIBRATION_COMMITTEE,
+                    jurisdiction=jur,
+                    employee=emp,
+                    requester_id="REQ-MCP",
+                    requester_role="HRBP_LEAD",
+                )
+
+                # Initialize baseline proposals
+                comp_agent = CompensationAgent()
+                promo_agent = PromotionAgent()
+                state = comp_agent.execute(state).state
+                state = promo_agent.execute(state).state
+
+                orchestrator = CalibrationCommitteeOrchestrator()
+                dossier = orchestrator.run_committee(state)
+
+                res_payload: dict[str, Any] = {
+                    "verdict": dossier.verdict.value,
+                    "calibrated_level": dossier.calibrated_level,
+                    "calibrated_increase_pct": float(dossier.calibrated_increase_pct * 100),
+                    "executive_summary": dossier.executive_summary,
+                    "points_of_consensus": dossier.points_of_consensus,
+                    "points_of_friction": dossier.points_of_friction,
+                    "actionable_coaching_milestones": dossier.actionable_coaching_milestones,
+                    "reflexion_iterations": dossier.reflexion_iterations,
+                    "reflexion_critiques": [c.model_dump() for c in dossier.reflexion_critiques],
+                    "debate_transcript_count": len(dossier.debate_transcript),
+                    "transcript_summary": [
+                        {
+                            "speaker": t.speaker.value,
+                            "round": t.round_number,
+                            "statement": t.statement,
+                        }
+                        for t in dossier.debate_transcript
+                    ],
+                }
+
+                return ToolCallResult(
+                    content=[{"type": "text", "text": json.dumps(res_payload, indent=2)}],
+                    isError=False,
                 )
 
             else:
