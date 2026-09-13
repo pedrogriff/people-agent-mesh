@@ -150,9 +150,7 @@ def run_evals_synthetic() -> None:
             if res.state.comp_proposal
             else "      Comp: N/A"
         )
-        print(
-            f"      HITL Required: {is_hitl} (Expected: {sc['expected_hitl_required']}) ✅\n"
-        )
+        print(f"      HITL Required: {is_hitl} (Expected: {sc['expected_hitl_required']}) ✅\n")
 
     print("--- 2. Demographic Counterfactual Parity Audits ---")
     cf_pairs = CounterfactualGenerator.generate_counterfactual_test_pairs()

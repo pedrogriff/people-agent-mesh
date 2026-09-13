@@ -70,9 +70,7 @@ def test_constructive_tone_judge_executive_polish() -> None:
 def test_constructive_tone_judge_punitive_phrasing() -> None:
     judge = ConstructiveToneJudge()
     context = {"level": "IC4"}
-    output = (
-        "Candidate demonstrated an attitude problem and lazy delivery. The review was a failure and subpar."
-    )
+    output = "Candidate demonstrated an attitude problem and lazy delivery. The review was a failure and subpar."
     score = judge.evaluate(context, output)
     assert score.passed is False
     assert score.score < 0.60
@@ -82,9 +80,7 @@ def test_constructive_tone_judge_punitive_phrasing() -> None:
 def test_demographic_neutrality_judge_clean() -> None:
     judge = DemographicNeutralityJudge()
     context = {"performance_rating": "EXCEEDS"}
-    output = (
-        "Candidate consistently demonstrated strategic technical leadership and led high-throughput ledger modernization."
-    )
+    output = "Candidate consistently demonstrated strategic technical leadership and led high-throughput ledger modernization."
     score = judge.evaluate(context, output)
     assert score.passed is True
     assert score.score == 1.0
@@ -93,9 +89,7 @@ def test_demographic_neutrality_judge_clean() -> None:
 def test_demographic_neutrality_judge_gendered_trope() -> None:
     judge = DemographicNeutralityJudge()
     context = {"performance_rating": "MEETS"}
-    output = (
-        "Candidate exhibits bossy tendencies and was overly assertive during sprint planning meetings."
-    )
+    output = "Candidate exhibits bossy tendencies and was overly assertive during sprint planning meetings."
     score = judge.evaluate(context, output)
     assert score.passed is False
     assert any("bossy" in issue for issue in score.detected_issues)

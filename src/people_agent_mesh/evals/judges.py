@@ -81,7 +81,9 @@ class FaithfulnessJudge(BaseJudge):
         # 1. Grounding check on numeric salary numbers
         if "proposed_base" in context:
             expected_base = str(int(Decimal(str(context["proposed_base"]))))
-            salary_matches = re.findall(r"(?:R\$|\$|CAD|BRL|USD)\s*([\d,]+(?:\.\d{2})?)", generated_output)
+            salary_matches = re.findall(
+                r"(?:R\$|\$|CAD|BRL|USD)\s*([\d,]+(?:\.\d{2})?)", generated_output
+            )
             for m in salary_matches:
                 cleaned = m.replace(",", "").split(".")[0]
                 if cleaned.isdigit() and len(cleaned) >= 5:
@@ -91,7 +93,9 @@ class FaithfulnessJudge(BaseJudge):
                         and cleaned != str(int(Decimal(str(context.get("calculated_bonus", 0)))))
                         and cleaned != str(int(Decimal(str(context.get("band_midpoint", 0)))))
                     ):
-                        issues.append(f"Ungrounded monetary figure in rationale: {m} (expected ~{expected_base})")
+                        issues.append(
+                            f"Ungrounded monetary figure in rationale: {m} (expected ~{expected_base})"
+                        )
                         score -= 0.15
 
         # 2. Merit percentage check
@@ -100,15 +104,31 @@ class FaithfulnessJudge(BaseJudge):
             pct_matches = re.findall(r"(\d+(?:\.\d+)?)\s*%", generated_output)
             for p in pct_matches:
                 val = float(p)
-                if abs(val - expected_pct) > 0.5 and val not in [10.0, 15.0, 20.0, 50.0, 80.0, 100.0, 120.0]:
-                    issues.append(f"Conflicting merit percentage cited: {val}% vs expected {expected_pct}%")
+                if abs(val - expected_pct) > 0.5 and val not in [
+                    10.0,
+                    15.0,
+                    20.0,
+                    50.0,
+                    80.0,
+                    100.0,
+                    120.0,
+                ]:
+                    issues.append(
+                        f"Conflicting merit percentage cited: {val}% vs expected {expected_pct}%"
+                    )
                     score -= 0.15
 
         # 3. Statutory citations check
         jurisdiction = context.get("jurisdiction", "")
         if jurisdiction == "BRAZIL":
-            if "CLT" not in generated_output and "468" not in generated_output and "labor" not in generated_output.lower():
-                issues.append("Missing required Brazil CLT statutory compliance grounding citation.")
+            if (
+                "CLT" not in generated_output
+                and "468" not in generated_output
+                and "labor" not in generated_output.lower()
+            ):
+                issues.append(
+                    "Missing required Brazil CLT statutory compliance grounding citation."
+                )
                 score -= 0.10
         elif jurisdiction == "UNITED_STATES":
             if "FLSA" not in generated_output and "exemption" not in generated_output.lower():
@@ -199,13 +219,22 @@ class ConstructiveToneJudge(BaseJudge):
         if constructive_count >= 2:
             score += 0.10
         elif constructive_count == 0:
-            issues.append("Lacks explicit constructive growth coaching language or forward expectations.")
+            issues.append(
+                "Lacks explicit constructive growth coaching language or forward expectations."
+            )
             score -= 0.10
 
         # 3. Check for clarity of recommendation action
         has_clear_action = any(
             action in text_lower
-            for action in ["recommend", "approve", "endorse", "route to", "adjust base", "merit increase"]
+            for action in [
+                "recommend",
+                "approve",
+                "endorse",
+                "route to",
+                "adjust base",
+                "merit increase",
+            ]
         )
         if not has_clear_action:
             issues.append("Missing clear actionable recommendation or executive decision summary.")
@@ -266,13 +295,17 @@ class DemographicNeutralityJudge(BaseJudge):
         # 1. Lexical bias scan for subjective gendered tropes
         for trope in self.BIASED_STEREOTYPES:
             if re.search(r"\b" + re.escape(trope) + r"\b", text_lower):
-                issues.append(f"Potentially biased or stereotyping descriptor identified: '{trope}'")
+                issues.append(
+                    f"Potentially biased or stereotyping descriptor identified: '{trope}'"
+                )
                 score -= 0.35
 
         # 2. Check if recommendation is grounded in performance ratings rather than demographic descriptors
         if "performance_rating" in context and context["performance_rating"] == "EXCEEDS":
             if "not ready" in text_lower and "tenure" not in text_lower:
-                issues.append("Promotion denial conflicts with EXCEEDS rating without objective business rationale.")
+                issues.append(
+                    "Promotion denial conflicts with EXCEEDS rating without objective business rationale."
+                )
                 score -= 0.20
 
         score = max(0.0, round(score, 2))

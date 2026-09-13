@@ -108,7 +108,11 @@ class EvalSuiteRunner:
             latencies.append(duration)
 
             passed = True
-            case_detail: dict[str, Any] = {"id": sc["id"], "category": "GOLDEN_BENCHMARK", "errors": []}
+            case_detail: dict[str, Any] = {
+                "id": sc["id"],
+                "category": "GOLDEN_BENCHMARK",
+                "errors": [],
+            }
 
             # 1. Compliance verification
             is_comp_pass = res.state.compliance_passed
@@ -149,8 +153,12 @@ class EvalSuiteRunner:
             if res.state.executive_dossier:
                 judge_ctx = {
                     "current_base": float(sc["employee"].base_salary),
-                    "proposed_base": float(res.state.comp_proposal.proposed_base) if res.state.comp_proposal else float(sc["employee"].base_salary),
-                    "merit_increase_pct": float(res.state.comp_proposal.percentage_increase * 100) if res.state.comp_proposal else 0.0,
+                    "proposed_base": float(res.state.comp_proposal.proposed_base)
+                    if res.state.comp_proposal
+                    else float(sc["employee"].base_salary),
+                    "merit_increase_pct": float(res.state.comp_proposal.percentage_increase * 100)
+                    if res.state.comp_proposal
+                    else 0.0,
                     "jurisdiction": sc["employee"].jurisdiction.value,
                     "current_level": sc["employee"].level,
                     "performance_rating": sc["employee"].performance_rating,
@@ -271,22 +279,30 @@ class EvalSuiteRunner:
             is_hitl = res.state.status == WorkflowStatus.AWAITING_HUMAN_APPROVAL
             if is_hitl != sc["expected_hitl_required"]:
                 passed = False
-                errors.append(f"HITL routing mismatch: expected {sc['expected_hitl_required']}, got {is_hitl}")
+                errors.append(
+                    f"HITL routing mismatch: expected {sc['expected_hitl_required']}, got {is_hitl}"
+                )
 
             if "min_expected_increase" in sc and res.state.comp_proposal:
                 if res.state.comp_proposal.percentage_increase < sc["min_expected_increase"]:
                     passed = False
-                    errors.append(f"Expected increase >= {sc['min_expected_increase']}, got {res.state.comp_proposal.percentage_increase}")
+                    errors.append(
+                        f"Expected increase >= {sc['min_expected_increase']}, got {res.state.comp_proposal.percentage_increase}"
+                    )
 
             if "max_expected_increase" in sc and res.state.comp_proposal:
                 if res.state.comp_proposal.percentage_increase > sc["max_expected_increase"]:
                     passed = False
-                    errors.append(f"Expected increase <= {sc['max_expected_increase']}, got {res.state.comp_proposal.percentage_increase}")
+                    errors.append(
+                        f"Expected increase <= {sc['max_expected_increase']}, got {res.state.comp_proposal.percentage_increase}"
+                    )
 
             if "expected_target_level" in sc and res.state.promotion_proposal:
                 if res.state.promotion_proposal.proposed_level != sc["expected_target_level"]:
                     passed = False
-                    errors.append(f"Expected target level {sc['expected_target_level']}, got {res.state.promotion_proposal.proposed_level}")
+                    errors.append(
+                        f"Expected target level {sc['expected_target_level']}, got {res.state.promotion_proposal.proposed_level}"
+                    )
 
             if passed:
                 synth_passed += 1
@@ -373,15 +389,9 @@ class EvalSuiteRunner:
         adv_defense_rate = (
             round(adv_blocked_count / len(adv_scenarios), 4) if adv_scenarios else 1.0
         )
-        avg_faith = (
-            round(sum(faith_scores) / len(faith_scores), 4) if faith_scores else 1.0
-        )
+        avg_faith = round(sum(faith_scores) / len(faith_scores), 4) if faith_scores else 1.0
         avg_tone = round(sum(tone_scores) / len(tone_scores), 4) if tone_scores else 1.0
-        avg_neutral = (
-            round(sum(neutral_scores) / len(neutral_scores), 4)
-            if neutral_scores
-            else 1.0
-        )
+        avg_neutral = round(sum(neutral_scores) / len(neutral_scores), 4) if neutral_scores else 1.0
         cf_parity_rate = round(cf_passed / len(cf_pairs), 4) if cf_pairs else 1.0
         synth_pass_rate = round(synth_passed / len(synth_cases), 4) if synth_cases else 1.0
         avg_lat = round(sum(latencies) / len(latencies), 2) if latencies else 0.0

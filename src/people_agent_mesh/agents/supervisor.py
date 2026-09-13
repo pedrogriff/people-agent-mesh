@@ -71,19 +71,17 @@ class MeshSupervisorAgent(BaseAgent):
                 reasons.append("Merit increase >= 7%")
 
             # Compa-ratio out of band governance
-            if (
-                state.comp_proposal.compa_ratio_after >= Decimal("1.20")
-                or state.employee.compa_ratio >= Decimal("1.20")
-            ):
+            if state.comp_proposal.compa_ratio_after >= Decimal(
+                "1.20"
+            ) or state.employee.compa_ratio >= Decimal("1.20"):
                 risk_score += 0.40
                 reasons.append(
                     "Severe Red-Circle compensation (compa-ratio >= 1.20) requires executive exception approval"
                 )
                 required_role = "PEOPLE_PARTNER"
-            elif (
-                state.comp_proposal.compa_ratio_after < Decimal("0.75")
-                or state.employee.compa_ratio < Decimal("0.75")
-            ):
+            elif state.comp_proposal.compa_ratio_after < Decimal(
+                "0.75"
+            ) or state.employee.compa_ratio < Decimal("0.75"):
                 risk_score += 0.40
                 reasons.append(
                     "Severe Green-Circle underpayment (compa-ratio < 0.75) requires equity correction review"
@@ -143,7 +141,9 @@ class MeshSupervisorAgent(BaseAgent):
                 f"Promotion Trajectory: Recommended for promotion from {state.promotion_proposal.current_level} to {state.promotion_proposal.proposed_level} "
                 f"with readiness score of {state.promotion_proposal.readiness_score:.2f} based on demonstrated expanded scope and strategic cross-functional impact."
             )
-            parts.append(f"Business Impact Summary: {state.promotion_proposal.business_impact_summary}")
+            parts.append(
+                f"Business Impact Summary: {state.promotion_proposal.business_impact_summary}"
+            )
 
         comp_status = (
             "PASSED"
