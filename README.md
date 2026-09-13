@@ -12,7 +12,7 @@
 [![MCP Server](https://img.shields.io/badge/MCP-Protocol%202024--11--05-8A2BE2.svg)](docs/MCP-SERVER-GUIDE.md)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-playgriff.me-blue?style=flat&logo=googlechrome&logoColor=white)](https://playgriff.me/people-agent-mesh/)
 
-> **Staff Software Engineer Showcase System**: A production-grade multi-agent orchestration, human-in-the-loop (HITL) governance, and evaluation platform designed specifically for sensitive **People Operations, Compensation Planning, and Talent Calibration** across **Brazil (🇧🇷), the United States (🇺🇸), and Canada (🇨🇦)**.
+> **Staff-Scale Systems Architecture Showcase**: A production-grade multi-agent orchestration, human-in-the-loop (HITL) governance, and evaluation platform designed specifically for sensitive **People Operations, Compensation Planning, and Talent Calibration** across **Brazil (🇧🇷), the United States (🇺🇸), and Canada (🇨🇦)**.
 
 ---
 

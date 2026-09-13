@@ -1,6 +1,6 @@
 # PeopleAgentMesh: Staff System Design & Engineering Whitepaper
-**Author**: Pedro Griff Marcincowski ([@pedrogriff](https://github.com/pedrogriff))  
-**Role Scope**: Staff Software Engineer, AI Agents & Distributed Systems  
+**Author**: Pedro Griff Marcincowski ([@pedrogriff](https://github.com/pedrogriff)) • Systems Architect & Lead Engineer  
+**Architecture Scope**: Staff-Scale Distributed Systems & Multi-Agent Governance  
 **Domain**: Enterprise People Operations, Quantitative Total Rewards & Statutory Labor Compliance  
 **Target Jurisdictions**: Brazil 🇧🇷 (CLT / LGPD), United States 🇺🇸 (FLSA / Title VII), Canada 🇨🇦 (PIPEDA / Pay Equity)  
 
@@ -270,7 +270,7 @@ Average execution latency across all 18 benchmark scenarios is **$0.17\text{ ms}
 
 ## 🎯 7. Staff Competency Mapping
 
-This system demonstrates the core technical capabilities expected of a **Staff Software Engineer, AI Agents**:
+This system demonstrates the core technical capabilities expected of Staff-level systems architecture in AI Agents & Distributed Systems:
 
 | Staff Competency | Concrete Implementation in PeopleAgentMesh |
 | :--- | :--- |

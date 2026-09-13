@@ -2,7 +2,7 @@
 
 **Status**: Accepted  
 **Date**: September 2026  
-**Author**: Pedro Griff Marcincowski (Staff Software Engineer, AI Agents)  
+**Author**: Pedro Griff Marcincowski (Systems Architect & Lead Engineer)  
 **Stakeholders**: Information Security (InfoSec), Legal, Privacy & Compliance (LGPD/GDPR/PIPEDA)  
 
 ---
