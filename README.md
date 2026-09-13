@@ -293,6 +293,7 @@ people-mesh --durable
 ## 📚 Staff Technical Leadership & Standards
 
 This repository serves as an enterprise standard and architectural reference:
+- **[Architecting Enterprise Multi-Agent Governance: Beyond RAG to Deterministic Mesh](docs/ARTICLES/architecting-enterprise-multi-agent-governance.md)**: ⭐ **Featured Engineering Article & Thought Leadership Whitepaper** detailing why naive RAG breaks down in mission-critical HR, the 6-layer deterministic mesh pattern, mathematical ensemble scoring, append-only WAL event sourcing, and backward Saga rollbacks.
 - **[Staff System Design Whitepaper & Interview Guide](docs/STAFF-SYSTEM-DESIGN.md)**: Comprehensive architectural whitepaper mapping the 7 Staff SWE core competencies (orchestration trade-offs, zero-retention privacy, adversarial defense, MCP, multi-tier evals, and FinOps).
 - **[ADR-001: Stateful Graph Orchestration vs. Autonomous ReAct Loops](docs/ADR-001-stateful-orchestration.md)**: Architectural analysis of determinism, state serialization, and crash-resilient HITL.
 - **[ADR-002: Zero-Retention Privacy Gateway](docs/ADR-002-zero-retention-privacy-gateway.md)**: Cryptographic surrogate tokenization and LGPD Article 18 right-to-be-forgotten design.

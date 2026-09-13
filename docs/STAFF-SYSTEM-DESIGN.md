@@ -4,6 +4,8 @@
 **Domain**: Enterprise People Operations, Quantitative Total Rewards & Statutory Labor Compliance  
 **Target Jurisdictions**: Brazil 🇧🇷 (CLT / LGPD), United States 🇺🇸 (FLSA / Title VII), Canada 🇨🇦 (PIPEDA / Pay Equity)  
 
+> 💡 **Featured Thought Leadership Article**: Read *[Architecting Enterprise Multi-Agent Governance: Beyond RAG to Deterministic Mesh](ARTICLES/architecting-enterprise-multi-agent-governance.md)* for the complete architectural synthesis, mathematical scoring formulations, and production benchmark breakdown.
+
 ---
 
 ## 🏛️ Executive Summary & Problem Framing
