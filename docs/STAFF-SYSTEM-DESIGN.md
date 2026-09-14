@@ -1,8 +1,8 @@
 # PeopleAgentMesh: Staff System Design & Engineering Whitepaper
-**Author**: Pedro Griff Marcincowski ([@pedrogriff](https://github.com/pedrogriff)) • Systems Architect & Lead Engineer  
+**Author**: Pedro Griff Marcincowski ([@pedrogriff](https://github.com/pedrogriff)) • Systems & Solutions Architect  
 **Architecture Scope**: Staff-Scale Distributed Systems & Multi-Agent Governance  
-**Domain**: Enterprise People Operations, Quantitative Total Rewards & Statutory Labor Compliance  
-**Target Jurisdictions**: Brazil 🇧🇷 (CLT / LGPD), United States 🇺🇸 (FLSA / Title VII), Canada 🇨🇦 (PIPEDA / Pay Equity)  
+**Domain**: Global Enterprise People Operations & Quantitative Total Rewards  
+**Evaluation Testbed**: Brazil 🇧🇷 (CLT / LGPD), United States 🇺🇸 (FLSA / Title VII), Canada 🇨🇦 (PIPEDA / Pay Equity)  
 
 > 💡 **Featured Thought Leadership Article**: Read *[Architecting Enterprise Multi-Agent Governance: Beyond RAG to Deterministic Mesh](ARTICLES/architecting-enterprise-multi-agent-governance.md)* for the complete architectural synthesis, mathematical scoring formulations, and production benchmark breakdown.
 

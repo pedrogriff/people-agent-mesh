@@ -2,7 +2,7 @@
 
 **Status**: Accepted  
 **Date**: September 2026  
-**Author**: Pedro Griff Marcincowski (Systems Architect & Lead Engineer)  
+**Author**: Pedro Griff Marcincowski (Systems & Solutions Architect)  
 **Stakeholders**: Platform Engineering, People Operations, Information Security, Legal & Compliance  
 
 ---

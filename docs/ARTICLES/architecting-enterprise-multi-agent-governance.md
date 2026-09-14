@@ -1,8 +1,9 @@
 # Architecting Enterprise Multi-Agent Governance: Beyond RAG to Deterministic Mesh
 
-**Author**: Pedro Griff Marcincowski ([@pedrogriff](https://github.com/pedrogriff)) • Systems Architect & Lead Engineer  
+**Author**: Pedro Griff Marcincowski ([@pedrogriff](https://github.com/pedrogriff)) • Systems & Solutions Architect  
 **Architecture Scope**: Staff-Scale Distributed Systems & Multi-Agent Governance  
-**Domain**: Enterprise People Operations, Quantitative Total Rewards & Statutory Compliance  
+**Domain**: Global Enterprise People Operations & Quantitative Total Rewards  
+**Evaluation Testbed**: Brazil 🇧🇷 (CLT / LGPD), United States 🇺🇸 (FLSA / Title VII), Canada 🇨🇦 (PIPEDA)  
 **Target Systems**: Mission-Critical Human Capital, Compensation, Equity & Labor Operations  
 **Open-Source Reference**: [PeopleAgentMesh (GitHub)](https://github.com/pedrogriff/people-agent-mesh)  
 

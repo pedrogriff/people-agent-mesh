@@ -1,6 +1,6 @@
 # RFC-001: Enterprise Agent Standards & Tool Contract Specification
 
-**Author**: Pedro Griff Marcincowski (Systems Architect & Lead Engineer)  
+**Author**: Pedro Griff Marcincowski (Systems & Solutions Architect)  
 **Target Audience**: All Engineering Teams building or adopting AI Agents across distributed engineering teams  
 **Status**: Adopted as Engineering Standard  
 
