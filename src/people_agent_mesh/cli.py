@@ -405,7 +405,7 @@ def run_committee_demo() -> None:
                 print(f"    ⚠️  {r}")
 
     print("\n-----------------------------------------------------------------")
-    print("  2. REFLEXION & SELF-CORRECTION AUDIT (CMU Agentic Loop)")
+    print("  2. REFLEXION & SELF-CORRECTION AUDIT")
     print("-----------------------------------------------------------------")
     for idx, critique in enumerate(dossier.reflexion_critiques, 1):
         print(f"\n  Reflexion Pass #{idx}:")

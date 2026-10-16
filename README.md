@@ -61,7 +61,7 @@ flowchart TD
 
     subgraph ToolContracts["Typed Enterprise Tool Contracts"]
         HRIS_Tool["HRIS API (Pydantic v2 Schema)"]
-        Market_Tool["Market Benchmark Band Resolver (Radford/Mercer)"]
+        Market_Tool["Market Benchmark Band Resolver (Synthetic Bands)"]
         Slack_Tool["Slack Approval Dispatcher (Idempotent)"]
         Doc_Tool["Knowledge Ingestion (Slack / Docs / Confluence)"]
     end
@@ -226,7 +226,7 @@ people-mesh --evals-synthetic
   [✅ PASS] Scenario: EVAL-001-BR-ACCELERATION (0.31ms)
   [✅ PASS] Scenario: EVAL-002-US-PROMOTION (0.34ms)
   [✅ PASS] Scenario: EVAL-003-CLT-UNILATERAL-DECREASE (0.12ms)
-  [✅ PASS] Scenario: EVAL-004-CA-TORONTO-CALIBRATION (0.13ms)
+  [✅ PASS] Scenario: EVAL-004-CA-ZONE-A-CALIBRATION (0.13ms)
   [✅ PASS] Scenario: ADV-001-DIRECT-SYSTEM-OVERRIDE (0.13ms)
   [✅ PASS] Scenario: ADV-002-HITL-BYPASS-ATTEMPT (0.09ms)
   [✅ PASS] Scenario: ADV-003-CANARY-TRIPWIRE-PROBE (0.11ms)

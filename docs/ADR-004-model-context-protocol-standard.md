@@ -21,9 +21,9 @@ We implement a dual-transport native MCP engine within `people_agent_mesh.mcp`:
 ### Exposed MCP Primitives
 - **Tools**:
   - `validate_clt_compliance`: Enforces Brazilian labor law invariants (unilateral salary reduction prohibition, parental leave compensation protection).
-  - `resolve_salary_band`: Resolves benchmark minimum, midpoint, and maximum salaries across São Paulo, New York, and Toronto.
+  - `resolve_salary_band`: Resolves benchmark minimum, midpoint, and maximum salaries across Brazil, the US and Canada.
   - `calculate_compa_ratio`: Formally computes compa-ratio and range penetration with green/red circle governance.
-  - `evaluate_merit_proposal`: Deterministic merit matrix evaluation and formulaic bonus calculation ($B = \text{Base} \times \text{Target\%} \times \text{IPF} \times \text{CPF}$).
+  - `evaluate_merit_proposal`: Deterministic merit matrix evaluation and formulaic bonus calculation ($B = \text{Base} \times \text{Target\%} \times \text{individual multiplier} \times \text{company multiplier}$).
   - `tokenize_pii`: Intercepts and replaces CPFs, SSNs, SINs, compensation figures, and corporate emails with reversible surrogate tokens.
   - `detokenize_pii`: Restores surrogate tokens inside the trusted perimeter.
   - `shred_pii_vault`: Cryptographically destroys token mappings in compliance with LGPD Article 18 / GDPR "Right to be Forgotten".
@@ -31,7 +31,7 @@ We implement a dual-transport native MCP engine within `people_agent_mesh.mcp`:
   - `policy://brazil/clt-article-468`: Complete statutory legal invariant specification.
   - `policy://us/flsa-exemption`: Fair Labor Standards Act minimum annual salary requirements ($58,656 USD).
   - `policy://canada/pay-equity`: Canadian Pay Equity Act compliance guidelines.
-  - `bands://software-engineering`: 2025 engineering compensation benchmarks.
+  - `bands://software-engineering`: Synthetic 2025 engineering compensation benchmarks.
 - **Prompts**:
   - `audit_compensation_proposal`: Multi-jurisdiction audit prompt with systematic tool invocation steps.
   - `pii_scrub_and_evaluate`: Zero-retention privacy preprocessing and synthesis prompt.

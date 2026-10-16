@@ -230,7 +230,7 @@ classDiagram
    - `EVAL-001-BR`: Brazil IC4 high merit acceleration ($+10.0\%$, Compa $0.86 \to 0.95$). Verifies CLT compliance and VP HITL gate.
    - `EVAL-002-US`: US IC5 promotion review ($+10.0\%$, Level jump IC5 $\to$ IC6). Verifies FLSA threshold grounding and executive review.
    - `EVAL-003-CLT`: Brazil CLT Article 468 unilateral reduction violation (Forced decrease $190k \to 180k$). Verifies immediate compliance failure and Chief People Officer escalation.
-   - `EVAL-004-CA`: Canada Toronto IC4 standard calibration ($+6.0\%$). Verifies PIPEDA compliance and routine auto-approval.
+   - `EVAL-004-CA`: Canada IC4 standard calibration ($+6.0\%$). Verifies PIPEDA compliance and routine auto-approval.
 2. **Tier 2: LLM-as-a-Judge Semantic Rubrics**:
    - **Faithfulness & Statutory Grounding ($\ge 85.0\%$, Current: $96.2\%$)**: Asserts all cited salaries and percentages match input context and band midpoints.
    - **Constructive Tone & Executive Polish ($\ge 85.0\%$, Current: $100.0\%$)**: Flags punitive phrasing (*"attitude problem"*, *"lazy"*, *"subpar"*) and rewards developmental framing (*"expanded scope"*, *"cross-functional leverage"*).
@@ -278,7 +278,7 @@ This system demonstrates the core technical capabilities expected of Staff-level
 | **Data Privacy & Statutory Compliance** | Zero-retention PII tokenizer, cryptographic vault shredding (LGPD Art. 18), and Brazil CLT Art. 468 verification. |
 | **Production Tool Contracts & Resiliency** | Pydantic v2 typed RPC contracts, sliding-window circuit breakers (`CircuitBreaker`), and fixed-point math engines. |
 | **AI Security & Adversarial Defense** | Heuristic threat scoring, XML delimiter sandboxing, and high-entropy canary token tripwires (`ADR-003`). |
-| **Multi-Agent Deliberation & Reflexion** | 4-Agent Calibration Committee debate swarm (Advocate, Skeptic, Equity Auditor, Moderator) with CMU Reflexion self-correction (`ADR-006`). |
+| **Multi-Agent Deliberation & Reflexion** | 4-Agent Calibration Committee debate swarm (Advocate, Skeptic, Equity Auditor, Moderator) with Reflexion self-correction (`ADR-006`). |
 | **Durable Execution & Event Sourcing** | Append-only event stream (SQLite WAL), zero-loss crash recovery, backward Saga rollback, and Temporal/Trigger.dev adapters (`ADR-007`). |
 | **Continuous Quality Engineering** | 5-Tier CI evaluation suite (18 scenarios), LLM-as-a-Judge rubrics, and counterfactual demographic parity audits. |
 | **Industry Protocol Standardization** | Full Anthropic Model Context Protocol (MCP) server implementation over stdio and HTTP/SSE (`ADR-004`). |

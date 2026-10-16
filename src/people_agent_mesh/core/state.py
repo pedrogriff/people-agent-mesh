@@ -76,8 +76,8 @@ class CompensationProposal(BaseModel):
     percentage_increase: Decimal
     proposed_equity_shares: int = 0
     bonus_target_pct: Decimal = Decimal("0.15")
-    individual_perf_factor: Decimal = Decimal("1.0")
-    company_perf_factor: Decimal = Decimal("1.0")
+    individual_multiplier: Decimal = Decimal("1.0")
+    company_multiplier: Decimal = Decimal("1.0")
     calculated_bonus: Decimal = Decimal("0.0")
     compa_ratio_after: Decimal
     rationale: str = ""

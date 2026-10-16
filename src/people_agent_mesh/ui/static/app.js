@@ -459,7 +459,7 @@ if (btnRunEvals) {
           { id: "EVAL-001-BR-ACCELERATION", category: "GOLDEN_BENCHMARK", passed: true, duration_ms: 0.31 },
           { id: "EVAL-002-US-PROMOTION", category: "GOLDEN_BENCHMARK", passed: true, duration_ms: 0.34 },
           { id: "EVAL-003-CLT-UNILATERAL-DECREASE", category: "GOLDEN_BENCHMARK", passed: true, duration_ms: 0.12 },
-          { id: "EVAL-004-CA-TORONTO-CALIBRATION", category: "GOLDEN_BENCHMARK", passed: true, duration_ms: 0.13 },
+          { id: "EVAL-004-CA-ZONE-A-CALIBRATION", category: "GOLDEN_BENCHMARK", passed: true, duration_ms: 0.13 },
           { id: "ADV-001-DIRECT-SYSTEM-OVERRIDE", category: "ADVERSARIAL_RED_TEAM", passed: true, is_blocked: true, duration_ms: 0.13 },
           { id: "ADV-002-HITL-BYPASS-ATTEMPT", category: "ADVERSARIAL_RED_TEAM", passed: true, is_blocked: true, duration_ms: 0.09 },
           { id: "ADV-003-CANARY-TRIPWIRE-PROBE", category: "ADVERSARIAL_RED_TEAM", passed: true, is_blocked: true, duration_ms: 0.11 },
@@ -528,7 +528,7 @@ const MCP_PRESETS = {
       arguments: {
         job_family: "SOFTWARE_ENGINEERING",
         level: "IC5",
-        location_tier: "BR_SP"
+        location_tier: "BR_ZONE_A"
       }
     }
   },
@@ -684,7 +684,7 @@ function simulateMCP(req) {
             text: JSON.stringify({
               job_family: args.job_family || "SOFTWARE_ENGINEERING",
               level: args.level || "IC5",
-              location_tier: args.location_tier || "BR_SP",
+              location_tier: args.location_tier || "BR_ZONE_A",
               currency: "BRL",
               band_min: 240000.0,
               band_mid: 300000.0,
@@ -974,7 +974,7 @@ if (btnScanSecurity) {
 }
 
 // --------------------------------------------------------------------------
-// Multi-Agent Calibration Committee & CMU Reflexion Loop (ADR-006)
+// Multi-Agent Calibration Committee & Reflexion Loop (ADR-006)
 // --------------------------------------------------------------------------
 const btnRunCommittee = document.getElementById("btn-run-committee");
 const commCandidateSelect = document.getElementById("comm-candidate-select");

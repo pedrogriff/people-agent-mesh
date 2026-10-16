@@ -57,56 +57,56 @@ class EnterpriseHRISTool:
 
 
 class MarketBenchmarkTool:
-    """Deterministic compensation band resolver using industry benchmark percentiles."""
+    """Deterministic compensation band resolver using synthetic benchmark bands."""
 
     # Pre-calculated salary bands: (job_family, level, location_tier) -> (min, mid, max, currency)
     BANDS: dict[tuple[str, str, str], tuple[Decimal, Decimal, Decimal, str]] = {
-        # Brazil - São Paulo (BRL)
-        ("SOFTWARE_ENGINEERING", "IC4", "BR_SP"): (
+        # Brazil - Zone A (BRL)
+        ("SOFTWARE_ENGINEERING", "IC4", "BR_ZONE_A"): (
             Decimal("180000"),
             Decimal("220000"),
             Decimal("260000"),
             "BRL",
         ),
-        ("SOFTWARE_ENGINEERING", "IC5", "BR_SP"): (
+        ("SOFTWARE_ENGINEERING", "IC5", "BR_ZONE_A"): (
             Decimal("240000"),
             Decimal("300000"),
             Decimal("360000"),
             "BRL",
         ),
-        ("SOFTWARE_ENGINEERING", "IC6", "BR_SP"): (
+        ("SOFTWARE_ENGINEERING", "IC6", "BR_ZONE_A"): (
             Decimal("330000"),
             Decimal("420000"),
             Decimal("510000"),
             "BRL",
         ),
-        # United States - New York / SF Tier 1 (USD)
-        ("SOFTWARE_ENGINEERING", "IC4", "US_NYC"): (
+        # United States - Zone A (USD)
+        ("SOFTWARE_ENGINEERING", "IC4", "US_ZONE_A"): (
             Decimal("160000"),
             Decimal("190000"),
             Decimal("225000"),
             "USD",
         ),
-        ("SOFTWARE_ENGINEERING", "IC5", "US_NYC"): (
+        ("SOFTWARE_ENGINEERING", "IC5", "US_ZONE_A"): (
             Decimal("210000"),
             Decimal("255000"),
             Decimal("305000"),
             "USD",
         ),
-        ("SOFTWARE_ENGINEERING", "IC6", "US_NYC"): (
+        ("SOFTWARE_ENGINEERING", "IC6", "US_ZONE_A"): (
             Decimal("275000"),
             Decimal("340000"),
             Decimal("410000"),
             "USD",
         ),
-        # Canada - Toronto Tier 1 (CAD)
-        ("SOFTWARE_ENGINEERING", "IC4", "CA_TORONTO"): (
+        # Canada - Zone A (CAD)
+        ("SOFTWARE_ENGINEERING", "IC4", "CA_ZONE_A"): (
             Decimal("130000"),
             Decimal("155000"),
             Decimal("180000"),
             "CAD",
         ),
-        ("SOFTWARE_ENGINEERING", "IC5", "CA_TORONTO"): (
+        ("SOFTWARE_ENGINEERING", "IC5", "CA_ZONE_A"): (
             Decimal("170000"),
             Decimal("205000"),
             Decimal("240000"),
@@ -117,8 +117,8 @@ class MarketBenchmarkTool:
     def resolve(self, inp: MarketBandInput) -> MarketBandOutput:
         key = (inp.job_family, inp.level, inp.location_tier)
         if key not in self.BANDS:
-            # Fallback to IC4 US_NYC
-            key = ("SOFTWARE_ENGINEERING", "IC4", "US_NYC")
+            # Fallback to IC4 US_ZONE_A
+            key = ("SOFTWARE_ENGINEERING", "IC4", "US_ZONE_A")
 
         b_min, b_mid, b_max, curr = self.BANDS[key]
         spread = (b_max - b_min) / b_min

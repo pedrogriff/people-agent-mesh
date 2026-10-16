@@ -35,7 +35,7 @@ Traditional AI (Toy / RAG)                      Enterprise Deterministic Mesh (P
 │  Naive Vector Search / Embed │                │  Context-Aware ABAC & Delimiter Sandboxing   │
 │            │                 │                │            │                                 │
 │            ▼                 │                │            ▼                                 │
-│  Single Mega-Prompt LLM Call │                │  Dialectical Committee Debate (CMU Reflexion)│
+│  Single Mega-Prompt LLM Call │                │  Dialectical Committee Debate (Reflexion)    │
 │            │                 │                │            │                                 │
 │            ▼                 │                │            ▼                                 │
 │  Unbounded Autonomous Loop   │                │  Stateful Reducer & Immutable Event Stream   │
@@ -46,7 +46,7 @@ Traditional AI (Toy / RAG)                      Enterprise Deterministic Mesh (P
 ```
 
 ### The Inherent Limitations of RAG in Quantitative Governance
-Retrieval-Augmented Generation is fundamentally a semantic pattern-matching mechanism. When an employee asks, *"What is the policy for parental leave in São Paulo?"*, RAG retrieves top-$k$ relevant text chunks and synthesizes a prose response. 
+Retrieval-Augmented Generation is fundamentally a semantic pattern-matching mechanism. When an employee asks, *"What is the policy for parental leave in Brazil?"*, RAG retrieves top-$k$ relevant text chunks and synthesizes a prose response. 
 
 However, enterprise compensation governance is not a search problem—it is a **constraint satisfaction and state transformation problem**:
 - A merit increase proposal is a function of current compa-ratio, performance rating distribution, department budget pool, cross-departmental peer parity, and statutory minimum wage indexing.
@@ -87,7 +87,7 @@ flowchart TD
         Skeptic["Skeptic / Bar-Raiser"] <--> CommitteeEngine
         Auditor["Equity Auditor"] <--> CommitteeEngine
         Moderator["Consensus Moderator"] <--> CommitteeEngine
-        CommitteeEngine <--> Reflexion["CMU Reflexion Self-Correction Loop"]
+        CommitteeEngine <--> Reflexion["Reflexion Self-Correction Loop"]
     end
 
     subgraph L4["Layer 4: Stateful Workflow Orchestrator"]
@@ -202,7 +202,7 @@ Simultaneously, a per-workflow high-entropy tripwire `CANARY_SEC_TRIPWIRE_<16_HE
 
 ---
 
-### Layer 3: Dialectical Committee Debate & CMU Reflexion Self-Correction
+### Layer 3: Dialectical Committee Debate & Reflexion Self-Correction
 
 Single-agent LLM prompts suffer from confirmation bias and sycophancy: if a manager writes a persuasive promotion nomination, a solitary LLM tends to validate the manager's praise uncritically.
 
@@ -224,7 +224,7 @@ flowchart LR
     end
 
     Committee --> Gate{"Variance Threshold\nσ <= 0.05 or\nConfidence >= 0.85?"}
-    Gate -- "No (High Conflict)" --> Reflexion["CMU Reflexion Self-Correction\n(Dialectical Verbal Revision)"]
+    Gate -- "No (High Conflict)" --> Reflexion["Reflexion Self-Correction\n(Dialectical Verbal Revision)"]
     Reflexion --> Committee
     Gate -- "Yes (Consensus Reached)" --> Approved["Synthesized Recommendation"]
 ```
@@ -246,7 +246,7 @@ The consensus confidence $C_{\text{agg}}$ is penalized by the standard deviation
 $$C_{\text{agg}} = \left( \sum_{i} w_i \cdot c_i \right) \cdot \left( 1.0 - \lambda \cdot \sigma_S \right)$$
 where $\sigma_S = \sqrt{\frac{1}{N}\sum (S_i - \bar{S})^2}$ and $\lambda = 0.5$.
 
-#### CMU Reflexion Self-Correction Loop
+#### Reflexion Self-Correction Loop
 If the score variance exceeds $\sigma_S > 0.15$ or confidence drops below $C_{\text{agg}} < 0.70$, the committee enters a **Reflexion self-correction round** (up to 3 iterations). 
 
 During Reflexion, the Moderator injects explicit critique prompts into each member's memory context:
@@ -577,7 +577,7 @@ pytest -v tests/test_evals_ci.py
 
 The enterprise AI landscape is rapidly shifting from open-ended conversational chatbots to **rigorous, deterministic, and durable agent meshes**. 
 
-When AI systems make decisions that impact people's livelihoods, corporate financial ledgers, and legal liabilities, probabilistic confidence is insufficient. By combining **zero-retention surrogate tokenization**, **dialectical committee debate with CMU Reflexion**, **append-only event sourcing with backward Saga recovery**, and **open protocols like MCP**, software engineering teams can build multi-agent platforms that are simultaneously intelligent, compliant, and rock-solid.
+When AI systems make decisions that impact people's livelihoods, corporate financial ledgers, and legal liabilities, probabilistic confidence is insufficient. By combining **zero-retention surrogate tokenization**, **dialectical committee debate with Reflexion**, **append-only event sourcing with backward Saga recovery**, and **open protocols like MCP**, software engineering teams can build multi-agent platforms that are simultaneously intelligent, compliant, and rock-solid.
 
 ---
 

@@ -22,7 +22,7 @@ class CompensationAgent(BaseAgent):
 
     def _determine_merit_increase(self, rating: str, current_compa: Decimal) -> Decimal:
         """
-        WorldatWork standard matrix: performance rating adjusted by compa-ratio.
+        Merit matrix: performance rating adjusted by compa-ratio.
         Lower compa-ratio gets an accelerated adjustment to reach midpoint.
         """
         base_rates = {
@@ -47,9 +47,9 @@ class CompensationAgent(BaseAgent):
 
         # 1. Resolve market benchmark band
         loc_tier = (
-            "BR_SP"
+            "BR_ZONE_A"
             if emp.jurisdiction.value == "BRAZIL"
-            else ("CA_TORONTO" if emp.jurisdiction.value == "CANADA" else "US_NYC")
+            else ("CA_ZONE_A" if emp.jurisdiction.value == "CANADA" else "US_ZONE_A")
         )
         band = self.benchmark_tool.resolve(
             MarketBandInput(
@@ -64,17 +64,21 @@ class CompensationAgent(BaseAgent):
         new_base = (emp.base_salary * (Decimal("1.0") + merit_pct)).quantize(Decimal("0.01"))
         new_compa = (new_base / band.band_mid).quantize(Decimal("0.0001"))
 
-        # 3. Calculate Bonus: Base * Target% * IPF * CPF
+        # 3. Calculate Bonus: Base * Target% * individual multiplier * company multiplier
         target_pct = Decimal("0.15") if emp.level in {"IC4", "IC5"} else Decimal("0.25")
-        ipf_map = {
+        individual_multiplier_map = {
             "EXCEEDS": Decimal("1.25"),
             "MEETS_HIGH": Decimal("1.10"),
             "MEETS": Decimal("1.00"),
             "NEEDS_IMPROVEMENT": Decimal("0.50"),
         }
-        ipf = ipf_map.get(emp.performance_rating, Decimal("1.00"))
-        cpf = Decimal("1.05")  # Company performance factor
-        bonus = (new_base * target_pct * ipf * cpf).quantize(Decimal("0.01"))
+        individual_multiplier = individual_multiplier_map.get(
+            emp.performance_rating, Decimal("1.00")
+        )
+        company_multiplier = Decimal("1.05")  # Company multiplier
+        bonus = (new_base * target_pct * individual_multiplier * company_multiplier).quantize(
+            Decimal("0.01")
+        )
 
         proposal = CompensationProposal(
             current_base=emp.base_salary,
@@ -84,8 +88,8 @@ class CompensationAgent(BaseAgent):
             if emp.performance_rating in {"EXCEEDS", "MEETS_HIGH"}
             else 0,
             bonus_target_pct=target_pct,
-            individual_perf_factor=ipf,
-            company_perf_factor=cpf,
+            individual_multiplier=individual_multiplier,
+            company_multiplier=company_multiplier,
             calculated_bonus=bonus,
             compa_ratio_after=new_compa,
             rationale=(

@@ -4,7 +4,7 @@
 **ACCEPTED** (2025-Q1)
 
 ## Context & Problem Statement
-In enterprise People Operations, annual talent reviews and compensation calibrations are rarely decided by an individual manager in isolation. In high-performing engineering organizations (e.g., Google, Nubank, Stripe), talent decisions are evaluated by **Cross-Functional Calibration Panels**:
+In enterprise People Operations, annual talent reviews and compensation calibrations are rarely decided by an individual manager in isolation. In high-performing engineering organizations, talent decisions are evaluated by **Cross-Functional Calibration Panels**:
 1. **The Sponsor / Direct Manager** champions the promotion, highlighting project velocity, delivery volume, and technical ownership.
 2. **The Bar-Raiser / Skeptic Peer** scrutinizes the claims, checking whether the impact was uniquely the candidate's or leveraged from senior peers, auditing sustained tenure at level, probing operational on-call reliability, and identifying competency gaps.
 3. **The Total Rewards / Equity Auditor** analyzes departmental merit budget consumption, compa-ratio positioning, and statutory compliance (Brazil CLT Art. 468, US FLSA, Canada Pay Equity).
@@ -16,7 +16,7 @@ In enterprise People Operations, annual talent reviews and compensation calibrat
 - **Unchecked Budget & Statutory Drift**: Single agents routinely ignore departmental merit pool exhaustion or create red-circle compression near salary band ceilings.
 
 ## Decision
-We implement a **Multi-Agent Calibration Committee Deliberation Engine** featuring structured dialectic debate and formal **Reflexion Self-Correction Loops** (grounded in Carnegie Mellon University Agentic AI research and Shinn et al.):
+We implement a **Multi-Agent Calibration Committee Deliberation Engine** featuring structured dialectic debate and formal **Reflexion Self-Correction Loops**, based on Shinn et al., 2023:
 
 ```mermaid
 flowchart TD
@@ -29,7 +29,7 @@ flowchart TD
     
     SkepClosing --> ModDraft["Round 3: Consensus Moderator\n(Synthesizes initial dossier & milestones)"]
     
-    subgraph Reflexion["Reflexion & Self-Correction Engine (CMU Agentic Loop)"]
+    subgraph Reflexion["Reflexion & Self-Correction Engine"]
         ModDraft --> Critique{"Reflexion Critique\n(Score >= 0.85?)"}
         Critique -->|Fails: Vague coaching / Unaddressed risks| Refine["Moderator Self-Correction Pass\n(Concretizes OKRs & mitigations)"]
         Refine --> ReCritique["Re-evaluate Critique"]
@@ -127,5 +127,5 @@ To ensure the deliberation engine does not introduce disparate impact:
 ## 📈 Staff Engineering Competency Alignment
 
 - **Multi-Agent Systems Design**: Moves beyond single-turn prompt engineering into formal dialectic agent swarms with adversarial checks and balances.
-- **Agentic Self-Correction**: Implements CMU/academic-grade Reflexion loops with concrete evaluation rubrics that self-heal ambiguous outputs before human delivery.
+- **Agentic Self-Correction**: Implements Reflexion loops with concrete evaluation rubrics that self-heal ambiguous outputs before human delivery.
 - **Enterprise Governance & Empathy**: Encapsulates realistic corporate compensation committee dynamics, balancing organizational velocity against equity and statutory labor laws.

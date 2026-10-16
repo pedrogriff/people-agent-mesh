@@ -140,7 +140,7 @@ def test_mcp_tool_resolve_salary_band_and_compa(mcp_server: PeopleMeshMCPServer)
             "arguments": {
                 "job_family": "SOFTWARE_ENGINEERING",
                 "level": "IC5",
-                "location_tier": "BR_SP",
+                "location_tier": "BR_ZONE_A",
             },
         },
     }

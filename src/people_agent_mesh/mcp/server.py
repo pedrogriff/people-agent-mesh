@@ -124,7 +124,7 @@ class PeopleMeshMCPServer:
             ToolDefinition(
                 name="resolve_salary_band",
                 description=(
-                    "Fetches verified market benchmark compensation bands (min, mid, max, currency, and spread) "
+                    "Fetches synthetic market benchmark compensation bands (min, mid, max, currency, and spread) "
                     "for a job family, seniority level, and geographic location tier."
                 ),
                 inputSchema={
@@ -142,8 +142,8 @@ class PeopleMeshMCPServer:
                         },
                         "location_tier": {
                             "type": "string",
-                            "description": "Geographic market tier: 'BR_SP' (São Paulo), 'US_NYC' (New York), 'CA_TORONTO' (Toronto).",
-                            "default": "BR_SP",
+                            "description": "Geographic market tier: 'BR_ZONE_A' (Brazil), 'US_ZONE_A' (United States), 'CA_ZONE_A' (Canada).",
+                            "default": "BR_ZONE_A",
                         },
                     },
                     "required": ["job_family", "level", "location_tier"],
@@ -182,7 +182,7 @@ class PeopleMeshMCPServer:
                 name="evaluate_merit_proposal",
                 description=(
                     "Executes a deterministic compensation calibration model: calculates merit percentage, "
-                    "new base salary, formulaic annual bonus (Base * Target% * IPF * CPF), and equity guidelines."
+                    "new base salary, formulaic annual bonus (Base * Target% * individual multiplier * company multiplier), and equity guidelines."
                 ),
                 inputSchema={
                     "type": "object",
@@ -539,7 +539,7 @@ class PeopleMeshMCPServer:
             ResourceDefinition(
                 uri="bands://software-engineering",
                 name="Global Software Engineering Benchmark Bands",
-                description="Official 2025 engineering benchmark ranges (IC4-IC6) across São Paulo, New York, and Toronto.",
+                description="Synthetic 2025 engineering benchmark ranges (IC4-IC6) across Brazil, the US and Canada.",
                 mimeType="application/json",
             ),
         ]
@@ -584,7 +584,7 @@ class PeopleMeshMCPServer:
                 "bands": [
                     {
                         "level": "IC4",
-                        "geo": "BR_SP",
+                        "geo": "BR_ZONE_A",
                         "currency": "BRL",
                         "min": 180000,
                         "mid": 220000,
@@ -592,7 +592,7 @@ class PeopleMeshMCPServer:
                     },
                     {
                         "level": "IC5",
-                        "geo": "BR_SP",
+                        "geo": "BR_ZONE_A",
                         "currency": "BRL",
                         "min": 240000,
                         "mid": 300000,
@@ -600,7 +600,7 @@ class PeopleMeshMCPServer:
                     },
                     {
                         "level": "IC6",
-                        "geo": "BR_SP",
+                        "geo": "BR_ZONE_A",
                         "currency": "BRL",
                         "min": 330000,
                         "mid": 420000,
@@ -608,7 +608,7 @@ class PeopleMeshMCPServer:
                     },
                     {
                         "level": "IC4",
-                        "geo": "US_NYC",
+                        "geo": "US_ZONE_A",
                         "currency": "USD",
                         "min": 160000,
                         "mid": 190000,
@@ -616,7 +616,7 @@ class PeopleMeshMCPServer:
                     },
                     {
                         "level": "IC5",
-                        "geo": "US_NYC",
+                        "geo": "US_ZONE_A",
                         "currency": "USD",
                         "min": 210000,
                         "mid": 255000,
@@ -624,7 +624,7 @@ class PeopleMeshMCPServer:
                     },
                     {
                         "level": "IC6",
-                        "geo": "US_NYC",
+                        "geo": "US_ZONE_A",
                         "currency": "USD",
                         "min": 275000,
                         "mid": 340000,
@@ -632,7 +632,7 @@ class PeopleMeshMCPServer:
                     },
                     {
                         "level": "IC4",
-                        "geo": "CA_TORONTO",
+                        "geo": "CA_ZONE_A",
                         "currency": "CAD",
                         "min": 130000,
                         "mid": 155000,
@@ -640,7 +640,7 @@ class PeopleMeshMCPServer:
                     },
                     {
                         "level": "IC5",
-                        "geo": "CA_TORONTO",
+                        "geo": "CA_ZONE_A",
                         "currency": "CAD",
                         "min": 170000,
                         "mid": 205000,
@@ -762,8 +762,8 @@ class PeopleMeshMCPServer:
                     percentage_increase=pct,
                     proposed_equity_shares=0,
                     bonus_target_pct=Decimal("0.15"),
-                    individual_perf_factor=Decimal("1.0"),
-                    company_perf_factor=Decimal("1.0"),
+                    individual_multiplier=Decimal("1.0"),
+                    company_multiplier=Decimal("1.0"),
                     calculated_bonus=Decimal("0"),
                     compa_ratio_after=Decimal("1.0"),
                     rationale="Audit proposal",
@@ -796,7 +796,7 @@ class PeopleMeshMCPServer:
                 inp = MarketBandInput(
                     job_family=str(arguments.get("job_family", "SOFTWARE_ENGINEERING")),
                     level=str(arguments.get("level", "IC5")),
-                    location_tier=str(arguments.get("location_tier", "BR_SP")),
+                    location_tier=str(arguments.get("location_tier", "BR_ZONE_A")),
                 )
                 band = self.benchmark_tool.resolve(inp)
                 band_data: dict[str, Any] = {
@@ -862,9 +862,9 @@ class PeopleMeshMCPServer:
                 compa = Decimal(str(arguments.get("compa_ratio", "1.0")))
 
                 loc_tier = (
-                    "BR_SP"
+                    "BR_ZONE_A"
                     if jurisdiction == Jurisdiction.BRAZIL
-                    else ("CA_TORONTO" if jurisdiction == Jurisdiction.CANADA else "US_NYC")
+                    else ("CA_ZONE_A" if jurisdiction == Jurisdiction.CANADA else "US_ZONE_A")
                 )
                 band = self.benchmark_tool.resolve(
                     MarketBandInput(
@@ -879,15 +879,17 @@ class PeopleMeshMCPServer:
                 new_compa = (new_base / band.band_mid).quantize(Decimal("0.0001"))
 
                 target_pct = Decimal("0.15") if level in {"IC4", "IC5"} else Decimal("0.25")
-                ipf_map = {
+                individual_multiplier_map = {
                     "EXCEEDS": Decimal("1.25"),
                     "MEETS_HIGH": Decimal("1.10"),
                     "MEETS": Decimal("1.00"),
                     "NEEDS_IMPROVEMENT": Decimal("0.50"),
                 }
-                ipf = ipf_map.get(rating, Decimal("1.00"))
-                cpf = Decimal("1.05")
-                bonus = (new_base * target_pct * ipf * cpf).quantize(Decimal("0.01"))
+                individual_multiplier = individual_multiplier_map.get(rating, Decimal("1.00"))
+                company_multiplier = Decimal("1.05")
+                bonus = (
+                    new_base * target_pct * individual_multiplier * company_multiplier
+                ).quantize(Decimal("0.01"))
                 equity_shares = 500 if rating in {"EXCEEDS", "MEETS_HIGH"} else 0
 
                 merit_data: dict[str, Any] = {

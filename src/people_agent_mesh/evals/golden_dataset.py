@@ -90,7 +90,7 @@ def get_golden_scenarios() -> list[dict[str, Any]]:
             "expected_hitl_required": True,
         },
         {
-            "id": "EVAL-004-CA-TORONTO-CALIBRATION",
+            "id": "EVAL-004-CA-ZONE-A-CALIBRATION",
             "description": "Canada IC5 talent calibration maintaining pay equity and standard bonus formula.",
             "workflow_type": WorkflowType.COMPENSATION_REVIEW,
             "employee": EmployeeProfile(

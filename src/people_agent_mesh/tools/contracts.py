@@ -54,7 +54,9 @@ class HRISQueryOutput(BaseModel):
 class MarketBandInput(BaseModel):
     job_family: str = Field(description="e.g., 'SOFTWARE_ENGINEERING', 'PRODUCT_MANAGEMENT'")
     level: str = Field(description="e.g., 'IC4', 'IC5', 'IC6', 'M1'")
-    location_tier: str = Field(description="e.g., 'BR_SP', 'US_NYC', 'US_REMOTE', 'CA_TORONTO'")
+    location_tier: str = Field(
+        description="e.g., 'BR_ZONE_A', 'US_ZONE_A', 'US_REMOTE', 'CA_ZONE_A'"
+    )
 
 
 class MarketBandOutput(BaseModel):

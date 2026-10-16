@@ -100,7 +100,7 @@ people-mesh --mcp-sse --port 8080
 | Tool Name | Parameters | Description |
 | :--- | :--- | :--- |
 | `validate_clt_compliance` | `current_base`, `proposed_base`, `is_on_parental_leave`, `employee_id` | Verifies CLT Art. 468 & CF Art. 7 irreducibility invariants. Returns violations and legal citations. |
-| `resolve_salary_band` | `job_family`, `level`, `location_tier` | Resolves min, mid, max, currency, and spread across SP (BRL), NYC (USD), and Toronto (CAD). |
+| `resolve_salary_band` | `job_family`, `level`, `location_tier` | Resolves min, mid, max, currency, and spread across Brazil, the US and Canada. |
 | `calculate_compa_ratio` | `base_salary`, `band_midpoint`, `band_min?`, `band_max?` | Formally calculates compa-ratio, range penetration, and green/red circle zone classification. |
 | `evaluate_merit_proposal` | `current_base`, `performance_rating`, `level`, `jurisdiction`, `compa_ratio` | Computes merit percentage, new base, formulaic annual bonus, equity guidelines, and HITL flags. |
 | `tokenize_pii` | `text`, `session_id?` | Replaces CPF, SSN, SIN, compensation amounts, and emails with surrogate tokens for Zero-Retention LLM inference. |
