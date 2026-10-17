@@ -131,7 +131,7 @@ class InMemoryDurableStore(DurableEventStore):
 
 class SQLiteDurableStore(DurableEventStore):
     """
-    Production-grade SQLite Durable Event Store with Write-Ahead Logging (WAL).
+    SQLite Durable Event Store with Write-Ahead Logging (WAL).
     Guarantees ACID transactions, zero data loss upon crash, and sub-millisecond point-in-time recovery.
     """
 

@@ -1,11 +1,11 @@
 # Architecting Enterprise Multi-Agent Governance: Beyond RAG to Deterministic Mesh
 
 **Author**: Pedro Griff Marcincowski ([@pedrogriff](https://github.com/pedrogriff)) • Systems & Solutions Architect  
-**Architecture Scope**: Staff-Scale Distributed Systems & Multi-Agent Governance  
+**Architecture Scope**: Distributed Systems & Multi-Agent Governance  
 **Domain**: Global Enterprise People Operations & Quantitative Total Rewards  
 **Evaluation Testbed**: Brazil 🇧🇷 (CLT / LGPD), United States 🇺🇸 (FLSA / Title VII), Canada 🇨🇦 (PIPEDA)  
-**Target Systems**: Mission-Critical Human Capital, Compensation, Equity & Labor Operations  
-**Open-Source Reference**: [PeopleAgentMesh (GitHub)](https://github.com/pedrogriff/people-agent-mesh)  
+**Target Systems**: Human Capital, Compensation, Equity & Labor Operations  
+**Source Code**: [PeopleAgentMesh (GitHub)](https://github.com/pedrogriff/people-agent-mesh)  
 
 ---
 
@@ -20,7 +20,7 @@ When an AI system operates on employee salaries, career progressions, and statut
 4. **Non-Deterministic Loop Traps**: Prompt-driven autonomous agents can loop indefinitely, hallucinating tool invocations or draining token budgets when encountering ambiguous policy edge cases.
 5. **Ephemeral Process Volatility**: When a Kubernetes node terminates a container pod mid-execution during a 48-hour executive sign-off window, in-memory state is wiped out, forcing either manual re-entry or expensive, non-deterministic re-prompting.
 
-To solve these systemic dilemmas, this paper introduces the **Deterministic Multi-Agent Mesh** pattern. Drawing on production implementations from the open-source **PeopleAgentMesh** platform, we present a battle-tested, 6-layer architectural blueprint that marries large language model semantic synthesis with **deterministic state machines**, **append-only event sourcing**, **backward Saga rollbacks**, **dialectical multi-agent committee debate**, and **strict zero-retention surrogate tokenization**.
+To solve these systemic dilemmas, this paper introduces the **Deterministic Multi-Agent Mesh** pattern. Drawing on the open-source **PeopleAgentMesh** project, which runs on synthetic HR cases, we present a 6-layer architectural blueprint that marries large language model semantic synthesis with **deterministic state machines**, **append-only event sourcing**, **backward Saga rollbacks**, **dialectical multi-agent committee debate**, and **strict zero-retention surrogate tokenization**.
 
 ---
 
@@ -457,7 +457,7 @@ Before any tool executes or document context is passed to an LLM, the `ContextAw
 
 ---
 
-## Production Benchmarks & Quantitative Verification
+## Benchmarks & Quantitative Verification
 
 The architecture is continuously validated by an automated **5-Tier Continuous Integration Evaluation Suite** comprising 18 exhaustive scenarios:
 
@@ -524,7 +524,7 @@ An enterprise governance mesh must respect jurisdictional sovereignty. PeopleAge
 
 ---
 
-## Architectural Lessons & Production Anti-Patterns
+## Architectural Lessons & Anti-Patterns
 
 Through building and benchmarking PeopleAgentMesh, we have identified four pervasive anti-patterns in enterprise multi-agent design:
 
@@ -546,9 +546,9 @@ Through building and benchmarking PeopleAgentMesh, we have identified four perva
 
 ---
 
-## Practical Deployment & Reference Implementation
+## Source code and quickstart
 
-The complete, production-grade reference implementation of this architecture is open-sourced under the MIT License at [github.com/pedrogriff/people-agent-mesh](https://github.com/pedrogriff/people-agent-mesh).
+The code for this architecture is open source under the MIT License at [github.com/pedrogriff/people-agent-mesh](https://github.com/pedrogriff/people-agent-mesh). It runs on synthetic HR cases.
 
 ### Quickstart: Exploring the Capabilities Locally
 
@@ -589,7 +589,7 @@ When AI systems make decisions that impact people's livelihoods, corporate finan
   title     = {Architecting Enterprise Multi-Agent Governance: Beyond RAG to Deterministic Mesh},
   year      = {2025},
   url       = {https://github.com/pedrogriff/people-agent-mesh},
-  note      = {Staff Systems Design Whitepaper and Open-Source Reference Implementation}
+  note      = {Design notes and open-source demo code}
 }
 ```
 

@@ -98,7 +98,7 @@ In GitHub Actions (`.github/workflows/ci.yml`), `people-mesh --evals` executes a
 
 ### Positive
 - **Guaranteed Algorithmic Fairness**: Zero statistical drift or demographic disparity across protected attributes.
-- **Deterministic CI Execution**: Evaluators execute deterministically in $< 1.0$ second with zero external LLM API dependency in standard test pipelines, while supporting model-backed judges in production staging.
+- **Deterministic CI Execution**: Evaluators execute deterministically in $< 1.0$ second with zero external LLM API dependency in standard test pipelines.
 - **Regulatory Audit Trail**: Every rubric evaluation produces an immutable JSON audit report satisfying LGPD Art. 20 and EU AI Act conformity assessments.
 
 ### Negative / Trade-offs

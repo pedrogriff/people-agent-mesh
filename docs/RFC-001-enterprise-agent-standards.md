@@ -1,8 +1,8 @@
 # RFC-001: Enterprise Agent Standards & Tool Contract Specification
 
 **Author**: Pedro Griff Marcincowski (Systems & Solutions Architect)  
-**Target Audience**: All Engineering Teams building or adopting AI Agents across distributed engineering teams  
-**Status**: Adopted as Engineering Standard  
+**Target Audience**: Contributors to this repo  
+**Status**: Draft, used only in this repo  
 
 ---
 
@@ -45,7 +45,7 @@ No agent code or prompt modification may be merged without passing automated CI 
 
 ## 3. Review & Operational Checklist
 Before shipping an agent to production, teams must complete the cross-functional sign-off:
-- [x] InfoSec: Verified Zero-Retention Gateway and PII Tokenizer.
-- [x] Legal / Compliance: Verified multi-jurisdiction labor compliance rules.
-- [x] FinOps: OpenTelemetry spans instrumented with departmental cost attribution tags.
-- [x] People Ops: Verified human escalation routing and Slack approval webhooks.
+- [ ] InfoSec: Verified Zero-Retention Gateway and PII Tokenizer.
+- [ ] Legal / Compliance: Verified multi-jurisdiction labor compliance rules.
+- [ ] FinOps: OpenTelemetry spans instrumented with departmental cost attribution tags.
+- [ ] People Ops: Verified human escalation routing and Slack approval webhooks.

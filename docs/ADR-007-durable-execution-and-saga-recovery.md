@@ -111,7 +111,7 @@ Upon receiving a `REJECTED` signal, the `SagaCoordinator` executes registered co
 
 ### 5. Pluggable Cloud Adapters (`DurableExecutionAdapter`)
 PeopleAgentMesh decouples workflow logic from physical task runtimes:
-* **`LocalDurableAdapter`**: Production-ready, zero-dependency embedded runtime using SQLite WAL.
+* **`LocalDurableAdapter`**: Zero-dependency embedded runtime using SQLite WAL.
 * **`TemporalAdapterSpec`**: Blueprint mapping mesh workflows to Temporal Workflows (`@workflow.defn`), Signals (`@workflow.signal`), Queries (`@workflow.query`), and Activities (`workflow.execute_activity`).
 * **`TriggerDevAdapterSpec`**: Blueprint mapping mesh workflows to Trigger.dev v3 micro-VM tasks and `wait.forRequest()` human approval primitives.
 

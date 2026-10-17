@@ -1,10 +1,10 @@
-# PeopleAgentMesh: Staff System Design & Engineering Whitepaper
+# PeopleAgentMesh: System design notes
 **Author**: Pedro Griff Marcincowski ([@pedrogriff](https://github.com/pedrogriff)) • Systems & Solutions Architect  
-**Architecture Scope**: Staff-Scale Distributed Systems & Multi-Agent Governance  
+**Architecture Scope**: Distributed Systems & Multi-Agent Governance  
 **Domain**: Global Enterprise People Operations & Quantitative Total Rewards  
 **Evaluation Testbed**: Brazil 🇧🇷 (CLT / LGPD), United States 🇺🇸 (FLSA / Title VII), Canada 🇨🇦 (PIPEDA / Pay Equity)  
 
-> 💡 **Featured Thought Leadership Article**: Read *[Architecting Enterprise Multi-Agent Governance: Beyond RAG to Deterministic Mesh](ARTICLES/architecting-enterprise-multi-agent-governance.md)* for the complete architectural synthesis, mathematical scoring formulations, and production benchmark breakdown.
+> 💡 **Related article**: Read *[Architecting Enterprise Multi-Agent Governance: Beyond RAG to Deterministic Mesh](ARTICLES/architecting-enterprise-multi-agent-governance.md)* for the architecture, the scoring formulas and the benchmark results.
 
 ---
 
@@ -14,7 +14,7 @@ Modern enterprise AI in human resources has largely stagnated at two extremes:
 1. **Fragile Toy Wrappers**: Open-ended LLM chat prompts connected to unconstrained autonomous loops (ReAct), which hallucinate monetary compensation numbers, leak Brazilian CPF / US SSN identifiers into public model caches, and fail under basic prompt injection attacks.
 2. **Brittle Legacy HRIS Engines**: Monolithic rules engines in Workday or SAP that require months of professional services to configure, lack semantic reasoning over unstructured manager feedback or peer reviews, and cannot explain compensation decisions across international jurisdictions.
 
-**PeopleAgentMesh** bridges this gap. It is an enterprise-grade multi-agent orchestration, standardized Model Context Protocol (MCP) server, and human-in-the-loop (HITL) governance platform. It treats AI agents not as conversational chatbots, but as **stateful, deterministically verifiable distributed systems**.
+**PeopleAgentMesh** bridges this gap. It is a multi-agent orchestration, standardized Model Context Protocol (MCP) server, and human-in-the-loop (HITL) governance platform. It treats AI agents not as conversational chatbots, but as **stateful, deterministically verifiable distributed systems**.
 
 ```mermaid
 flowchart TD
@@ -202,7 +202,7 @@ In stdio transport mode, any unbuffered diagnostic write to `sys.stdout` corrupt
 ## 📊 5. Multi-Tier Evaluation Suite & Continuous Quality Gates
 
 ### The Evaluation Problem: Beyond Unit Tests (ADR-005)
-Unit tests verify that code runs; evaluations verify that agent behaviors, statutory citations, executive tone, and demographic fairness satisfy production quality bars.
+Unit tests verify that code runs; evaluations verify that agent behaviors, statutory citations, executive tone, and demographic fairness meet the quality bar.
 
 PeopleAgentMesh implements an automated **5-Tier Evaluation Suite** executing 18 exhaustive scenarios in CI:
 
@@ -251,7 +251,7 @@ classDiagram
 
 ---
 
-## 📈 6. Production Observability & FinOps Topology
+## 📈 6. Observability & FinOps Topology
 
 ### OpenTelemetry GenAI Semantic Conventions
 Every execution emits vendor-neutral OpenTelemetry spans conforming to the OpenTelemetry GenAI specification:
@@ -268,18 +268,18 @@ Average execution latency across all 18 benchmark scenarios is **$0.17\text{ ms}
 
 ---
 
-## 🎯 7. Staff Competency Mapping
+## 🎯 7. Capability map
 
-This system demonstrates the core technical capabilities expected of Staff-level systems architecture in AI Agents & Distributed Systems:
+Where each capability lives in the code:
 
-| Staff Competency | Concrete Implementation in PeopleAgentMesh |
+| Capability | Implementation in PeopleAgentMesh |
 | :--- | :--- |
 | **End-to-End Orchestration Ownership** | Stateful DAG supervisor, checkpointed serialization (`to_snapshot`), and async Slack HITL pause/resume. |
 | **Data Privacy & Statutory Compliance** | Zero-retention PII tokenizer, cryptographic vault shredding (LGPD Art. 18), and Brazil CLT Art. 468 verification. |
-| **Production Tool Contracts & Resiliency** | Pydantic v2 typed RPC contracts, sliding-window circuit breakers (`CircuitBreaker`), and fixed-point math engines. |
+| **Tool Contracts & Resiliency** | Pydantic v2 typed RPC contracts, sliding-window circuit breakers (`CircuitBreaker`), and fixed-point math engines. |
 | **AI Security & Adversarial Defense** | Heuristic threat scoring, XML delimiter sandboxing, and high-entropy canary token tripwires (`ADR-003`). |
 | **Multi-Agent Deliberation & Reflexion** | 4-Agent Calibration Committee debate swarm (Advocate, Skeptic, Equity Auditor, Moderator) with Reflexion self-correction (`ADR-006`). |
 | **Durable Execution & Event Sourcing** | Append-only event stream (SQLite WAL), zero-loss crash recovery, backward Saga rollback, and Temporal/Trigger.dev adapters (`ADR-007`). |
 | **Continuous Quality Engineering** | 5-Tier CI evaluation suite (18 scenarios), LLM-as-a-Judge rubrics, and counterfactual demographic parity audits. |
 | **Industry Protocol Standardization** | Full Anthropic Model Context Protocol (MCP) server implementation over stdio and HTTP/SSE (`ADR-004`). |
-| **Production Telemetry & FinOps** | OpenTelemetry GenAI spans, token attribution, and cost modeling per organizational department. |
+| **Telemetry & FinOps** | OpenTelemetry GenAI spans, token attribution, and cost modeling per organizational department. |

@@ -1,5 +1,7 @@
 # PeopleAgentMesh: Enterprise Multi-Agent Orchestration & Governance Platform
 
+My first multi-agent system, built on synthetic HR cases. I'd build it differently now. My current project is [comp-insight-advisor](https://github.com/pedrogriff/comp-insight-advisor).
+
 [![CI & Agent Quality Gates](https://github.com/pedrogriff/people-agent-mesh/actions/workflows/ci.yml/badge.svg)](https://github.com/pedrogriff/people-agent-mesh/actions)
 [![Python 3.11 | 3.12 | 3.13](https://img.shields.io/badge/Python-3.11%20%7C%203.12%20%7C%203.13-blue.svg)](https://www.python.org/downloads/)
 [![Type Checked: MyPy Strict](https://img.shields.io/badge/types-mypy%20strict-brightgreen.svg)](https://mypy-lang.org/)
@@ -12,7 +14,7 @@
 [![MCP Server](https://img.shields.io/badge/MCP-Protocol%202024--11--05-8A2BE2.svg)](docs/MCP-SERVER-GUIDE.md)
 [![Live Demo](https://img.shields.io/badge/Live%20Demo-playgriff.me-blue?style=flat&logo=googlechrome&logoColor=white)](https://playgriff.me/people-agent-mesh/)
 
-> **Staff-Scale Systems Architecture Showcase**: A production-grade multi-agent orchestration, human-in-the-loop (HITL) governance, and evaluation platform designed specifically for sensitive **People Operations, Compensation Planning, and Talent Calibration** across **Brazil (🇧🇷), the United States (🇺🇸), and Canada (🇨🇦)**.
+> A multi-agent orchestration, human-in-the-loop governance and evaluation project for people operations, compensation planning and talent calibration in Brazil, the US and Canada.
 
 ---
 
@@ -23,7 +25,7 @@ Modern enterprise AI in high-stakes HR cannot be a toy prompt wrapper or an unco
 2. **Deterministic State Graph Orchestration**: Checkpointed state machine supporting asynchronous pause/resume human-in-the-loop (HITL) approvals that can span hours or days without active socket overhead.
 3. **Multi-Jurisdiction Labor Compliance**: Statutory verification enforcing Brazil's CLT (Article 468 wage irreducibility, parental protections), US FLSA exempt salary baselines, and Canadian pay transparency standards.
 4. **Resilient Tool Contracts**: Pydantic v2 typed RPC contracts protected by sliding-window circuit breakers, idempotency keys, and deterministic rule-engine fallbacks.
-5. **Staff Quality Bar & CI Evals**: Automated evaluation suite running golden benchmarks in GitHub Actions, gating pull requests on faithfulness (>95%), compliance adherence (100%), and p95 latency.
+5. **Quality Bar & CI Evals**: Automated evaluation suite running golden benchmarks in GitHub Actions, gating pull requests on faithfulness (>95%), compliance adherence (100%), and p95 latency.
 
 ---
 
@@ -66,7 +68,7 @@ flowchart TD
         Doc_Tool["Knowledge Ingestion (Slack / Docs / Confluence)"]
     end
 
-    subgraph Observability["Staff AgentOps & FinOps"]
+    subgraph Observability["AgentOps & FinOps"]
         OTel["OpenTelemetry GenAI Semantic Spans"]
         FinOps["Departmental Token & Cost Attribution"]
         EvalGate["CI Golden Benchmark Quality Gate"]
@@ -116,14 +118,14 @@ flowchart TD
 - **Fault Isolation**: Sliding-window circuit breakers protect upstream services (`HRIS_API`, `Slack_API`), failing fast and falling back to read-replicas during degradations.
 - **Idempotency Keys**: Generates deterministic hashes for mutating actions to prevent double-execution during model retry loops.
 
-### 5. Staff-Level Quality Bar: CI Evals & GenAI Tracing
+### 5. Quality Bar: CI Evals & GenAI Tracing
 - **Golden Benchmark Dataset**: Curated scenarios covering edge cases (parental leave merit protection, cross-currency parity, FLSA salary baselines).
 - **CI Merge Gate**: Automated GitHub Actions workflow blocking PRs if compliance adherence $< 100\%$ or faithfulness $< 95\%$.
 - **OpenTelemetry Instrumentation**: Distributed spans capturing prompt/completion tokens, duration, model version, and departmental cost attribution.
 
 ---
 
-## ⚡ Quickstart & Interactive Showcase
+## ⚡ Quickstart & Interactive Demo
 
 ### 1. Installation
 ```bash
@@ -135,7 +137,7 @@ cd people-agent-mesh
 pip install -e ".[dev]"
 ```
 
-### 2. Launch the Live Interactive Web Showcase UI
+### 2. Launch the Interactive Web Demo
 Launch the interactive web dashboard and REST API locally:
 ```bash
 people-mesh --ui
@@ -290,11 +292,11 @@ people-mesh --durable
 
 ---
 
-## 📚 Staff Technical Leadership & Standards
+## 📚 Design docs
 
-This repository serves as an enterprise standard and architectural reference:
-- **[Architecting Enterprise Multi-Agent Governance: Beyond RAG to Deterministic Mesh](docs/ARTICLES/architecting-enterprise-multi-agent-governance.md)**: ⭐ **Featured Engineering Article & Thought Leadership Whitepaper** detailing why naive RAG breaks down in mission-critical HR, the 6-layer deterministic mesh pattern, mathematical ensemble scoring, append-only WAL event sourcing, and backward Saga rollbacks.
-- **[Staff System Design Whitepaper & Interview Guide](docs/STAFF-SYSTEM-DESIGN.md)**: Comprehensive architectural whitepaper mapping the 7 Staff SWE core competencies (orchestration trade-offs, zero-retention privacy, adversarial defense, MCP, multi-tier evals, and FinOps).
+Design notes and decision records for this repo:
+- **[Architecting Enterprise Multi-Agent Governance: Beyond RAG to Deterministic Mesh](docs/ARTICLES/architecting-enterprise-multi-agent-governance.md)**: Article on why naive RAG breaks down in HR workflows, the 6-layer deterministic mesh pattern, ensemble scoring, append-only WAL event sourcing and backward saga rollbacks.
+- **[System design notes](docs/SYSTEM-DESIGN.md)**: Orchestration trade-offs, zero-retention privacy, adversarial defense, MCP, multi-tier evals and FinOps.
 - **[ADR-001: Stateful Graph Orchestration vs. Autonomous ReAct Loops](docs/ADR-001-stateful-orchestration.md)**: Architectural analysis of determinism, state serialization, and crash-resilient HITL.
 - **[ADR-002: Zero-Retention Privacy Gateway](docs/ADR-002-zero-retention-privacy-gateway.md)**: Cryptographic surrogate tokenization and LGPD Article 18 right-to-be-forgotten design.
 - **[ADR-003: Adversarial Prompt Injection Defense & Canary Tripwires](docs/ADR-003-adversarial-prompt-injection-defense.md)**: Heuristic threat scoring, delimiter sandboxing, and canary exfiltration barriers.
@@ -302,7 +304,7 @@ This repository serves as an enterprise standard and architectural reference:
 - **[ADR-005: LLM-as-a-Judge Semantic Rubrics & Demographic Parity Auditing](docs/ADR-005-llm-as-a-judge-evals.md)**: Semantic evaluation framework for Faithfulness, Constructive Executive Tone, and Counterfactual Statistical Parity ($\Delta \le 0.0001$).
 - **[ADR-006: Multi-Agent Calibration Committee Deliberation & Reflexion Loops](docs/ADR-006-multi-agent-calibration-debate.md)**: Dialectic debate swarms (Advocate, Skeptic, Equity Auditor, Moderator) with verbal reinforcement and OKR self-correction.
 - **[ADR-007: Durable Execution Engine, Event Sourcing & Backward Saga Rollbacks](docs/ADR-007-durable-execution-and-saga-recovery.md)**: Append-only event streams, SQLite WAL persistence, crash recovery without LLM re-execution, backward saga compensations, and Temporal / Trigger.dev adapters.
-- **[RFC-001: Enterprise Agent Standards](docs/RFC-001-enterprise-agent-standards.md)**: Guidelines for `AgentSpec`, `ToolSpec`, circuit breaking, and CI quality gates adopted across engineering teams.
+- **[RFC-001: Enterprise Agent Standards](docs/RFC-001-enterprise-agent-standards.md)**: Guidelines for `AgentSpec`, `ToolSpec`, circuit breaking, and CI quality gates for this repo.
 
 ---
 
@@ -324,5 +326,5 @@ PYTHONPATH=src pytest -v
 
 ## 📄 License & Author
 
-Crafted with rigorous systems engineering by **[Pedro Griff Marcincowski](https://github.com/pedrogriff)**.  
+Written by **[Pedro Griff Marcincowski](https://github.com/pedrogriff)**.  
 Licensed under the [MIT License](LICENSE).

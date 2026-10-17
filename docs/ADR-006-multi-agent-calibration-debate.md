@@ -124,7 +124,7 @@ To ensure the deliberation engine does not introduce disparate impact:
 
 ---
 
-## 📈 Staff Engineering Competency Alignment
+## 📈 Design takeaways
 
 - **Multi-Agent Systems Design**: Moves beyond single-turn prompt engineering into formal dialectic agent swarms with adversarial checks and balances.
 - **Agentic Self-Correction**: Implements Reflexion loops with concrete evaluation rubrics that self-heal ambiguous outputs before human delivery.
